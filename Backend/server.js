@@ -16,13 +16,13 @@ const PORT = process.env.PORT
 const MONGO_URL = process.env.MONGO_URL
 
 //connecting database
-mongoose.connect(MONGO_URL,{
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-
-})
+mongoose.connect(MONGO_URL)
 .then(()=>console.log("mongodb database succesfully connected "))
 .catch((error)=>console.log("error connecting database",error))
+
+//signup route
+const SignupRoute = require("./routes/signup")
+app.use("/signup",SignupRoute)
 
 //setting the route
 app.get("/",(req,res)=>{

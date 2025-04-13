@@ -1,4 +1,5 @@
 const Home = () => {
+  //home page ui
   return (
     <div className="w-full h-screen  flex flex-col items-center justify-center bg-gradient-to-br from-slate-900 to-gray-800 text-white p-4">
       <h1 className="text-5xl font-bold mb-4 text-center">

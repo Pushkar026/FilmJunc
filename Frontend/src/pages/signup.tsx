@@ -16,10 +16,35 @@ const Signup = () => {
   };
 
   //creating handlesubmit
-  const handleSubmit = (e: React.ChangeEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.ChangeEvent<HTMLFormElement>) => {
     e.preventDefault();
-  };
+    try {
+      //sending request to backend
+      const response = await fetch("http://localhost:5000/signup", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      });
 
+      console.log("Response Status:", response.status);
+      const data = await response.json();
+      console.log("Response Data:", data);
+
+      //poping signup succesfull or not message
+      if (response.ok) {
+        alert("Signup Succesfull");
+        setformdata({ Username: "", Email: "", Password: "" });
+      } else {
+        alert("Can't Signup at the moment");
+      }
+    } catch (error) {
+      console.log("Error:", error);
+      alert("Something went wrong");
+    }
+  };
+  //sign up ui
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100">
       <form
@@ -76,5 +101,4 @@ const Signup = () => {
     </div>
   );
 };
-
 export default Signup;
