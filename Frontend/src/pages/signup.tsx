@@ -2,9 +2,9 @@ import { useState } from "react";
 const Signup = () => {
   //Creating usestate to save data of input fields
   const [formData, setformdata] = useState({
-    Username: "",
-    Email: "",
-    Password: "",
+    username: "",
+    email: "",
+    password: "",
   });
 
   //creating handlechange
@@ -35,7 +35,7 @@ const Signup = () => {
       //poping signup succesfull or not message
       if (response.ok) {
         alert("Signup Succesfull");
-        setformdata({ Username: "", Email: "", Password: "" });
+        setformdata({ username: "", email: "", password: "" });
       } else {
         alert("Can't Signup at the moment");
       }
@@ -59,8 +59,8 @@ const Signup = () => {
           <span className="text-gray-700">Username</span>
           <input
             type="text"
-            name="Username"
-            value={formData.Username}
+            name="username"
+            value={formData.username}
             onChange={handleChange}
             className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
             required
@@ -71,8 +71,8 @@ const Signup = () => {
           <span className="text-gray-700">Email</span>
           <input
             type="Email"
-            name="Email"
-            value={formData.Email}
+            name="email"
+            value={formData.email}
             onChange={handleChange}
             className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
             required
@@ -83,8 +83,8 @@ const Signup = () => {
           <span className="text-gray-700">Password</span>
           <input
             type="Password"
-            name="Password"
-            value={formData.Password}
+            name="password"
+            value={formData.password}
             onChange={handleChange}
             className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
             required

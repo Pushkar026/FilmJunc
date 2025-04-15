@@ -1,13 +1,14 @@
 const express = require("express")
 const router = express.Router()
-const User=require("../UserSchema")
+const User=require("../Database/UserSchema")
 
 //route for new user registeration
 router.post("/",(async (req,res)=>{
-    const {Username,Email,Password}=req.body
+    const {username,email,password}=req.body
+    console.log('Request body:', req.body);
 
-    if (!Username || Username.trim() === '') {
-        return res.status(400).send({ message: 'Username is required' });
+    if (!username || !email || !password) {
+        return res.status(400).json({ error: "Username, email, and password are required." });
       }
 
 
@@ -16,7 +17,7 @@ router.post("/",(async (req,res)=>{
         
 
         //check for same email
-        const Emailexists = await User.findOne({Email});
+        const Emailexists = await User.findOne({email});
         if (Emailexists){
             res.status(400).json({message:"Email already exists"})
         }
@@ -24,9 +25,9 @@ router.post("/",(async (req,res)=>{
        
         //new user creation
         const NewUser = new User({
-            Username,
-            Email,
-            Password
+            username,
+            email,
+            password
 
         })
 

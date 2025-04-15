@@ -10,7 +10,7 @@ mongoose.connect("mongodb://localhost:27017/filmjunc", {
   console.log("Connected to MongoDB");
 
   // Delete documents where 'Username' is null
-  User.deleteMany({ Username: null })
+  User.deleteMany({ username: null })
     .then(result => {
       console.log(`${result.deletedCount} documents with null usernames were deleted.`);
       mongoose.connection.close(); // Close the connection after cleanup
