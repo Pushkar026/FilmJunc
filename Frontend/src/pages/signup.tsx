@@ -16,7 +16,7 @@ const Signup = () => {
   };
 
   //creating handlesubmit
-  const handleSubmit = async (e: React.ChangeEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
       //sending request to backend
@@ -28,6 +28,7 @@ const Signup = () => {
         body: JSON.stringify(formData),
       });
 
+      //logging response
       console.log("Response Status:", response.status);
       const data = await response.json();
       console.log("Response Data:", data);
