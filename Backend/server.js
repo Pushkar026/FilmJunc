@@ -24,6 +24,11 @@ mongoose.connect(MONGO_URL)
 const SignupRoute = require("./routes/signup")
 app.use("/signup",SignupRoute)
 
+//login route
+const LoginRoute = require("./routes/login")
+app.use("/login",LoginRoute)
+
+
 //setting the route
 app.get("/",(req,res)=>{
     res.send("FILMJUNC BACKEND IS RUNNING")
