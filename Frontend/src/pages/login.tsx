@@ -1,10 +1,13 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 const Login = () => {
   const [formData, setFormData] = useState({
     username: "",
     password: "",
   });
+  //naviagte hook
+  const navigate = useNavigate();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -29,8 +32,8 @@ const Login = () => {
       if (res.ok) {
         //saving data using localStorage
         localStorage.setItem("token", data.token);
-
         // Redirect to profile or home
+        navigate("/");
       } else {
         alert(data.message || "Login failed");
       }
