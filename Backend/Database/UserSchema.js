@@ -22,7 +22,24 @@ const UserSchema = new mongoose.Schema({
     password:{
         type:String,
         required:[true,"Invalid Password"]
-    }
+    },
+    
+    profileImage:String,
+    bannerImage: String,
+    bio: String,
+    location: String,
+    role: String,
+    socials: {
+      instagram: String,
+      website: String,
+      // add more if needed
+    },
+    portfolio:
+      {
+        title: String,
+        description: String,
+        link: String,
+      },
 
 },{timestamps:true})
 

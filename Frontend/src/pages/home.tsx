@@ -11,7 +11,7 @@ const Home = () => {
   }, []);
 
   const handleProfileClick = () => {
-    navigate("/profile");
+    navigate("/userprofile");
   };
 
   const handleLogout = () => {
