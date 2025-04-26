@@ -28,6 +28,14 @@ app.use("/signup",SignupRoute)
 const LoginRoute = require("./routes/login")
 app.use("/login",LoginRoute)
 
+//userprofile route
+const UserprofileRoute = require("./routes/userprofile")
+app.use("/",UserprofileRoute)
+
+//editprofile route
+const EditProfileRoutes = require("./routes/editprofile"); 
+app.use('/', EditProfileRoutes);
+
 
 //setting the route
 app.get("/",(req,res)=>{

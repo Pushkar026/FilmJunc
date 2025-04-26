@@ -1,26 +1,65 @@
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+
+// Define the TypeScript interface for the user
+interface User {
+  name: string;
+  role: string;
+  location: string;
+  bio: string;
+  profileImage: string;
+  bannerImage: string;
+  socials: {
+    instagram?: string;
+    website?: string;
+  };
+}
+
 const UserProfile = () => {
   const navigate = useNavigate();
-  // Example user data (replace with props or fetched data)
-  const user = {
-    name: "Pushkar Yadav",
-    role: "Cinematographer",
-    location: "Faridabad, India",
-    bio: "Passionate about storytelling through lenses. Worked on 10+ short films.",
-    profileImage: "/images/profile.jpg",
-    bannerImage: "/images/banner.jpg",
-    socials: {
-      instagram: "https://instagram.com/pushkaryadav001",
-      website: "https://films.com",
-    },
-  };
+  const [user, setUser] = useState<User | null>(null); // Define the type for the user state
+  const [loading, setLoading] = useState(true); // Loading state
+
+  // Fetch user data from API
+  useEffect(() => {
+    const fetchUserData = async () => {
+      const token = localStorage.getItem("token"); // Get token from localStorage
+      const res = await fetch("http://localhost:5000/userprofile", {
+        headers: {
+          Authorization: `Bearer ${token}`, // Send token for authentication
+        },
+      });
+
+      if (res.ok) {
+        const data = await res.json();
+        setUser(data); // Set the user data in the state
+      } else {
+        // Handle error (e.g., unauthorized or no data found)
+        console.error("Failed to fetch user data ");
+        navigate("/login"); // Redirect to login if not authorized
+      }
+      setLoading(false); // Set loading to false once data is fetched
+    };
+
+    fetchUserData();
+  }, [navigate]);
+
+  // If data is loading
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
+  // If no user data available
+  if (!user) {
+    return <div>User not found.</div>;
+  }
 
   return (
-    <div className=" min-h-screen mx-auto bg-white shadow-md rounded-xl overflow-hidden">
+    <div className="min-h-screen mx-auto bg-white shadow-md rounded-xl overflow-hidden">
       {/* Banner */}
       <div className="h-48 w-full bg-gray-200">
         <img
-          src={user.bannerImage}
+          src={user.bannerImage || "/images/default-banner.jpg"}
           alt="Banner"
           className="w-full h-full object-cover"
         />
@@ -30,7 +69,7 @@ const UserProfile = () => {
       <div className="p-6 relative">
         <div className="absolute -top-16 left-6">
           <img
-            src={user.profileImage}
+            src={user.profileImage || "/images/default-profile.jpg"}
             alt="Profile"
             className="w-32 h-32 rounded-full border-4 border-white shadow-md object-cover"
           />
@@ -44,7 +83,7 @@ const UserProfile = () => {
 
           {/* Social Links */}
           <div className="mt-4 flex gap-4">
-            {user.socials.instagram && (
+            {user.socials?.instagram && (
               <a
                 href={user.socials.instagram}
                 target="_blank"
@@ -54,7 +93,7 @@ const UserProfile = () => {
                 Instagram
               </a>
             )}
-            {user.socials.website && (
+            {user.socials?.website && (
               <a
                 href={user.socials.website}
                 target="_blank"

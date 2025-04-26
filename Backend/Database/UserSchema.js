@@ -26,6 +26,7 @@ const UserSchema = new mongoose.Schema({
     
     profileImage:String,
     bannerImage: String,
+    name:String,
     bio: String,
     location: String,
     role: String,
