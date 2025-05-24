@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 const Home = () => {
   const navigate = useNavigate();
   const [isLoggedIn, setIsLoggedIn] = useState(!!localStorage.getItem("token"));
+  const [searchTerm, setSearchTerm] = useState("");
 
   useEffect(() => {
     // Listen to changes in localStorage (token) and update login status
@@ -20,6 +21,45 @@ const Home = () => {
     navigate("/"); // Redirect to home page
   };
 
+  const handleSearch = async () => {
+    const token = localStorage.getItem("token"); // Get token from localStorage
+
+    if (!token) {
+      // If the token is missing, inform the user or redirect to login
+      alert("You must be logged in to perform a search.");
+      return; // Stop the search if no token
+    }
+
+    if (!searchTerm.trim()) return; // Prevent empty search
+
+    try {
+      // Send the token in the Authorization header
+      const response = await fetch(
+        `http://localhost:5000/api/search?location=${encodeURIComponent(
+          searchTerm
+        )}`,
+        {
+          method: "GET", // Use GET method for searching
+          headers: {
+            Authorization: `Bearer ${token}`, // Add token to Authorization header
+          },
+        }
+      );
+
+      if (!response.ok) {
+        // Handle response failure (non-200 status codes)
+        throw new Error("Search failed with status: " + response.status);
+      }
+
+      const data = await response.json();
+      console.log(data); // For now, just log the results
+
+      // Later you can set these results to a state and display them
+    } catch (error) {
+      console.error("Search failed:", error);
+    }
+  };
+
   return (
     <div className="w-full h-screen relative flex flex-col items-center justify-center bg-gradient-to-br from-slate-900 to-gray-800 text-white p-4">
       {/* 🔍 Search bar - top left */}
@@ -27,8 +67,15 @@ const Home = () => {
         <div className="absolute top-4 left-4">
           <input
             type="text"
-            placeholder="Search creators..."
-            className="px-4 py-2 rounded-lg text-black"
+            placeholder="Search for city "
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                handleSearch();
+              }
+            }}
+            className="px-4 py-2 rounded-lg text-white"
           />
         </div>
       )}

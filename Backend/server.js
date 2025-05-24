@@ -36,6 +36,11 @@ app.use("/",UserprofileRoute)
 const EditProfileRoutes = require("./routes/editprofile"); 
 app.use('/', EditProfileRoutes);
 
+//search route
+const searchRoutes = require('./routes/search'); 
+app.use("/api",searchRoutes);
+
+
 
 //setting the route
 app.get("/",(req,res)=>{
