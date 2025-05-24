@@ -6,6 +6,17 @@ const Home = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(!!localStorage.getItem("token"));
   const [searchTerm, setSearchTerm] = useState("");
 
+  interface user {
+    _id: string;
+    name: string;
+    role: string;
+    location: string;
+    bio?: string;
+    profileImage?: string;
+  }
+
+  const [SearchResult, setSearchResult] = useState<user[]>([]);
+
   useEffect(() => {
     // Listen to changes in localStorage (token) and update login status
     setIsLoggedIn(!!localStorage.getItem("token"));
@@ -53,6 +64,7 @@ const Home = () => {
 
       const data = await response.json();
       console.log(data); // For now, just log the results
+      setSearchResult(data);
 
       // Later you can set these results to a state and display them
     } catch (error) {
@@ -77,6 +89,26 @@ const Home = () => {
             }}
             className="px-4 py-2 rounded-lg text-white"
           />
+        </div>
+      )}
+
+      {/* Search Result*/}
+      {isLoggedIn && (
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mt-6">
+          {SearchResult.map((user) => (
+            <div key={user._id} className="bg-white shadow-md rounded-2xl p-4">
+              <img
+                src={user.profileImage || "/default-profile.jpg"}
+                alt={`${user.name}'s profile`}
+                className="w-full h-40 object-cover rounded-xl mb-3"
+              />
+              <h2 className=" text-gray-700  font-semibold">{user.name}</h2>
+              <p className="text-sm text-gray-500">
+                {user.role} from {user.location}
+              </p>
+              <p className="mt-2 text-gray-700">{user.bio}</p>
+            </div>
+          ))}
         </div>
       )}
 
