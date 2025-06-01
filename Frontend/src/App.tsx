@@ -6,6 +6,7 @@ import Login from "./pages/login";
 import UserProfile from "./pages/userprofile";
 import EditProfile from "./pages/editprofile";
 import SearchResult from "./pages/searchresult";
+import ViewProfile from "./pages/viewprofile";
 
 function App() {
   return (
@@ -17,6 +18,7 @@ function App() {
         <Route path="/userprofile" element={<UserProfile />} />
         <Route path="/editprofile" element={<EditProfile />} />
         <Route path="/searchresult" element={<SearchResult />} />
+        <Route path="/viewprofile/:id" element={<ViewProfile />} />
       </Routes>
     </Router>
   );

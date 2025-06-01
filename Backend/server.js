@@ -40,6 +40,10 @@ app.use('/', EditProfileRoutes);
 const searchRoutes = require('./routes/search'); 
 app.use("/api",searchRoutes);
 
+//viewprofile route
+const ViewProfileRoute = require("./routes/viewprofile");
+app.use("/api",ViewProfileRoute);
+
 
 
 //setting the route

@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 interface User {
   _id: string;
@@ -17,6 +18,8 @@ const SearchResult = () => {
 
   const [searchResult, setSearchResult] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchResults = async () => {
@@ -68,11 +71,12 @@ const SearchResult = () => {
             <div
               key={user._id}
               className="bg-white shadow-lg rounded-2xl p-4 text-gray-900"
+              onClick={() => navigate(`/viewprofile/${user._id}`)}
             >
               <img
                 src={user.profileImage || "/default-profile.jpg"}
                 alt={`${user.name}'s profile`}
-                className="w-full h-40 object-cover rounded-xl mb-3"
+                className="w-32 h-32 rounded-full border-4 border-white shadow-md object-cover"
               />
               <h2 className="text-xl font-semibold">{user.name}</h2>
               <p className="text-sm text-gray-600">
