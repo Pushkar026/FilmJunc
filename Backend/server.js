@@ -44,6 +44,10 @@ app.use("/api",searchRoutes);
 const ViewProfileRoute = require("./routes/viewprofile");
 app.use("/api",ViewProfileRoute);
 
+//messages route
+const MessageRoute = require("./routes/messages");
+app.use("/api",MessageRoute)
+
 
 
 //setting the route

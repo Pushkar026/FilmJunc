@@ -7,6 +7,7 @@ import UserProfile from "./pages/userprofile";
 import EditProfile from "./pages/editprofile";
 import SearchResult from "./pages/searchresult";
 import ViewProfile from "./pages/viewprofile";
+import ChatBoxWrapper from "./pages/chatboxwrapper";
 
 function App() {
   return (
@@ -19,6 +20,7 @@ function App() {
         <Route path="/editprofile" element={<EditProfile />} />
         <Route path="/searchresult" element={<SearchResult />} />
         <Route path="/viewprofile/:id" element={<ViewProfile />} />
+        <Route path="/chatbox/:selectedUserId" element={<ChatBoxWrapper />} />
       </Routes>
     </Router>
   );

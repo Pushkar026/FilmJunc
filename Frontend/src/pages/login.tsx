@@ -32,6 +32,7 @@ const Login = () => {
       if (res.ok) {
         //saving data using localStorage
         localStorage.setItem("token", data.token);
+        localStorage.setItem("userId", data.user._id);
         // Redirect to profile or home
         navigate("/");
       } else {

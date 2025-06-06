@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 interface User {
   _id: string;
@@ -22,6 +23,8 @@ const ViewProfile = () => {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -110,9 +113,7 @@ const ViewProfile = () => {
           {/* Message Button */}
           <button
             className="mt-6 bg-blue-600 text-white py-2 px-6 rounded-full hover:bg-blue-700 block"
-            onClick={() =>
-              alert(`Message to ${user.name} feature coming soon!`)
-            }
+            onClick={() => navigate(`/chatbox/${id}`)}
           >
             Message
           </button>
