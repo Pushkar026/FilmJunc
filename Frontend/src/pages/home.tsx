@@ -95,6 +95,16 @@ const Home = () => {
         </div>
       )}
 
+      {/* 💬 Messaging icon */}
+      {isLoggedIn && (
+        <div
+          className="absolute top-14 right-4 cursor-pointer"
+          onClick={() => (window.location.href = "/inbox")} // Change to your routing method
+        >
+          <span className="text-2xl hover:opacity-80 transition">💬</span>
+        </div>
+      )}
+
       {/* Logout Button - only visible if logged in */}
       {isLoggedIn && (
         <div className="absolute top-4 right-16">

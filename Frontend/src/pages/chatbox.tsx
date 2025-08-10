@@ -29,7 +29,7 @@ const ChatBox: React.FC<ChatBoxProps> = ({ currentUserId, selectedUserId }) => {
           `http://localhost:5000/api/messages?user1=${currentUserId}&user2=${selectedUserId}`
         );
         if (!res.ok) {
-          throw new Error("Failed to fetch messages bro");
+          throw new Error("Failed to fetch messages");
         }
         const data: Message[] = await res.json();
         setMessages(data);
