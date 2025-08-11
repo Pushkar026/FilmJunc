@@ -48,6 +48,10 @@ app.use("/api",ViewProfileRoute);
 const MessageRoute = require("./routes/messages");
 app.use("/api",MessageRoute)
 
+//inbox route
+const InboxRoute = require("./routes/inbox");
+app.use("/api",InboxRoute)
+
 
 
 //setting the route
