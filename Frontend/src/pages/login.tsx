@@ -6,7 +6,6 @@ const Login = () => {
     username: "",
     password: "",
   });
-  //naviagte hook
   const navigate = useNavigate();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -16,7 +15,6 @@ const Login = () => {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    // Add your login logic here (send data to the backend, etc.)
     try {
       const res = await fetch("http://localhost:5000/login", {
         method: "POST",
@@ -27,14 +25,13 @@ const Login = () => {
         }),
       });
 
-      const data = await res.json();
+      const data = await res.json(); // backend response
 
       if (res.ok) {
-        //saving data using localStorage
         localStorage.setItem("token", data.token);
         localStorage.setItem("userId", data.user._id);
-        // Redirect to profile or home
-        navigate("/");
+
+        navigate("/"); // redirect
       } else {
         alert(data.message || "Login failed");
       }
@@ -42,50 +39,92 @@ const Login = () => {
       console.error(err);
       alert("An error occurred");
     }
-    console.log("Login data submitted:", formData);
   };
 
+  // Fixed positions for floating icons
+  const icons = ["🎬", "🎥", "🎤", "🍿"];
+  const iconPositions = [
+    { top: "10%", left: "5%" },
+    { top: "25%", left: "80%" },
+    { top: "60%", left: "20%" },
+    { top: "75%", left: "70%" },
+  ];
+
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
+    <div className="relative flex h-screen items-center justify-center bg-gradient-to-br from-yellow-400 via-orange-500 to-red-600 text-white overflow-hidden">
+      {/* Floating icons */}
+      {icons.map((icon, idx) => (
+        <span
+          key={idx}
+          className="absolute text-5xl opacity-70 animate-float"
+          style={{
+            top: iconPositions[idx].top,
+            left: iconPositions[idx].left,
+            animationDelay: `${idx * 1}s`,
+          }}
+        >
+          {icon}
+        </span>
+      ))}
+
+      {/* Login Form */}
       <form
         onSubmit={handleSubmit}
-        className="bg-white p-8 rounded-2xl shadow-xl w-full max-w-md"
+        className="relative z-10 w-full max-w-md rounded-2xl bg-gray-800/70 p-8 shadow-xl backdrop-blur-lg"
       >
-        <h2 className="text-3xl font-bold mb-6 text-center text-gray-800">
-          Login
+        <h2 className="mb-6 text-center text-3xl font-bold text-yellow-400">
+          FilmJunc Login
         </h2>
 
         <label className="block mb-4">
-          <span className="text-gray-700">Username</span>
+          <span className="text-gray-300">Username</span>
           <input
             type="text"
             name="username"
             value={formData.username}
             onChange={handleChange}
-            className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+            className="mt-1 block w-full rounded-xl border border-gray-700 bg-gray-900 px-4 py-3 text-white focus:border-yellow-400 focus:outline-none"
             required
           />
         </label>
 
         <label className="block mb-6">
-          <span className="text-gray-700">Password</span>
+          <span className="text-gray-300">Password</span>
           <input
             type="password"
             name="password"
             value={formData.password}
             onChange={handleChange}
-            className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+            className="mt-1 block w-full rounded-xl border border-gray-700 bg-gray-900 px-4 py-3 text-white focus:border-yellow-400 focus:outline-none"
             required
           />
         </label>
 
         <button
           type="submit"
-          className="w-full bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded-lg transition duration-200"
+          className="w-full rounded-xl bg-yellow-400 px-4 py-3 font-semibold text-black transition hover:bg-yellow-300"
         >
           Login
         </button>
+
+        <p className="mt-6 text-center text-sm text-gray-400">
+          Don't have an account?{" "}
+          <a href="/signup" className="text-yellow-400 hover:underline">
+            Sign Up
+          </a>
+        </p>
       </form>
+
+      {/* Floating animation */}
+      <style>
+        {`
+          @keyframes float { 
+            0%,100% { transform: translateY(0) rotate(0deg); } 
+            50% { transform: translateY(-20px) rotate(15deg); } 
+          }
+          .animate-float { animation: float 6s ease-in-out infinite; }
+        `}
+      </style>
     </div>
   );
 };

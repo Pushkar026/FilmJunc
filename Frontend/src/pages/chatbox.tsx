@@ -12,38 +12,35 @@ interface ChatBoxProps {
   selectedUserId: string;
 }
 
-const ChatBox: React.FC<ChatBoxProps> = ({ currentUserId, selectedUserId }) => {
+const FullPageChat: React.FC<ChatBoxProps> = ({
+  currentUserId,
+  selectedUserId,
+}) => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [text, setText] = useState("");
-  const chatRef = useRef<HTMLDivElement | null>(null);
+  const chatEndRef = useRef<HTMLDivElement | null>(null);
 
+  // Fetch messages
   useEffect(() => {
-    if (!selectedUserId) {
-      setMessages([]);
-      return;
-    }
+    if (!selectedUserId) return;
 
     const fetchMessages = async () => {
       try {
         const res = await fetch(
           `http://localhost:5000/api/messages?user1=${currentUserId}&user2=${selectedUserId}`
         );
-        if (!res.ok) {
-          throw new Error("Failed to fetch messages");
-        }
+        if (!res.ok) throw new Error("Failed to fetch messages");
         const data: Message[] = await res.json();
         setMessages(data);
-      } catch (error) {
-        console.error(error);
-        setMessages([]);
+      } catch (err) {
+        console.error(err);
       }
-      console.log("currentUserId:", currentUserId);
-      console.log("selectedUserId:", selectedUserId);
     };
 
     fetchMessages();
-  }, [selectedUserId, currentUserId]);
+  }, [currentUserId, selectedUserId]);
 
+  // Send message
   const handleSend = async () => {
     if (!text.trim()) return;
 
@@ -56,70 +53,75 @@ const ChatBox: React.FC<ChatBoxProps> = ({ currentUserId, selectedUserId }) => {
     try {
       const res = await fetch("http://localhost:5000/api/messages", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(newMessage),
       });
 
-      if (!res.ok) {
-        throw new Error("Failed to send message bro");
-      }
-
+      if (!res.ok) throw new Error("Failed to send message");
       const savedMessage: Message = await res.json();
 
       setMessages((prev) => [...prev, savedMessage]);
       setText("");
-    } catch (error) {
-      console.error(error);
-      alert("Error sending message. Please try again.");
+    } catch (err) {
+      console.error(err);
+      alert("Error sending message");
     }
   };
 
+  // Auto-scroll
   useEffect(() => {
-    chatRef.current?.scrollIntoView({ behavior: "smooth" });
+    chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
   return (
-    <div className="w-full h-[400px] border rounded-lg flex flex-col p-4 bg-white shadow">
-      <div className="flex-1 overflow-y-auto space-y-2">
-        {messages.map((msg, idx) => (
-          <div
-            key={idx}
-            className={`p-2 rounded-md max-w-[60%] ${
-              msg.senderId === currentUserId
-                ? "bg-blue-500 text-white self-end ml-auto"
-                : "bg-gray-200 text-black self-start"
-            }`}
-          >
-            {msg.content}
-          </div>
-        ))}
-        <div ref={chatRef} />
+    <div className="w-full h-screen bg-gradient-to-b from-black via-red-950 to-black text-white flex flex-col">
+      {/* Header */}
+      <div className="bg-black bg-opacity-70 backdrop-blur-md px-6 py-4 flex justify-between items-center shadow-lg">
+        <h1 className="text-2xl font-extrabold text-yellow-400 cursor-pointer">
+          🎬 FilmJunc Chat
+        </h1>
       </div>
-      <div className="flex mt-4">
+
+      {/* Messages */}
+      <div className="flex-1 overflow-y-auto p-6 space-y-4">
+        {messages.length ? (
+          messages.map((msg, idx) => (
+            <div
+              key={idx}
+              className={`max-w-[60%] p-3 rounded-lg ${
+                msg.senderId === currentUserId
+                  ? "bg-yellow-400 text-black self-end ml-auto"
+                  : "bg-gray-800 text-white self-start"
+              }`}
+            >
+              {msg.content}
+            </div>
+          ))
+        ) : (
+          <p className="text-gray-400 text-center mt-4">No messages yet.</p>
+        )}
+        <div ref={chatEndRef} />
+      </div>
+
+      {/* Input */}
+      <div className="bg-black bg-opacity-70 backdrop-blur-md p-4 flex gap-2">
         <input
           type="text"
-          className="flex-1 border rounded-l px-3 py-2"
-          placeholder="Type a message..."
           value={text}
           onChange={(e) => setText(e.target.value)}
-          onKeyDown={(e) => {
-            if (e.key === "Enter") {
-              e.preventDefault();
-              handleSend();
-            }
-          }}
+          onKeyDown={(e) => e.key === "Enter" && handleSend()}
+          placeholder="Type a message..."
+          className="flex-1 px-4 py-3 rounded-l-lg bg-gray-900 text-yellow-300 placeholder-yellow-500 focus:outline-none focus:ring-2 focus:ring-yellow-400 "
         />
         <button
           onClick={handleSend}
-          className="bg-blue-600 text-white px-4 rounded-r"
+          className="bg-yellow-400 text-black px-6 py-2 rounded-r-full font-bold hover:bg-yellow-300 transition"
         >
-          Send
+          Send 🎟️
         </button>
       </div>
     </div>
   );
 };
 
-export default ChatBox;
+export default FullPageChat;

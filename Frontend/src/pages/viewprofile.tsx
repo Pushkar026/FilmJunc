@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
-import { useNavigate } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 
 interface User {
   _id: string;
@@ -19,12 +18,11 @@ interface User {
 
 const ViewProfile = () => {
   const { id } = useParams<{ id: string }>();
+  const navigate = useNavigate();
 
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-
-  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -34,15 +32,10 @@ const ViewProfile = () => {
       try {
         const response = await fetch(`http://localhost:5000/api/users/${id}`, {
           method: "GET",
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+          headers: { Authorization: `Bearer ${token}` },
         });
 
-        if (!response.ok) {
-          throw new Error("Failed to fetch user profile");
-        }
-
+        if (!response.ok) throw new Error("Failed to fetch user profile");
         const data = await response.json();
         setUser(data);
       } catch (err) {
@@ -60,42 +53,45 @@ const ViewProfile = () => {
   if (error || !user) return <p>{error || "User not found"}</p>;
 
   return (
-    <div className="min-h-screen w-full bg-white shadow-md rounded-xl overflow-hidden">
+    <div className="min-h-screen w-full bg-black text-white">
       {/* Banner */}
-      <div className="h-48 w-full bg-gray-200">
+      <div className="h-48 w-full relative">
         <img
           src={user.bannerImage || "/images/default-banner.jpg"}
           alt="Banner"
-          className="w-full h-full object-cover"
+          className="w-full h-full object-cover opacity-80"
         />
+        <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/50 to-black/80"></div>
       </div>
 
       {/* Profile Section */}
-      <div className="p-6 relative">
+      <div className="relative max-w-5xl mx-auto px-6">
         <div className="absolute -top-16 left-6">
           <img
             src={user.profileImage || "/images/default-profile.jpg"}
             alt="Profile"
-            className="w-32 h-32 rounded-full border-4 border-white shadow-md object-cover"
+            className="w-32 h-32 rounded-full border-4 border-yellow-400 shadow-lg object-cover"
           />
         </div>
 
-        <div className="ml-40">
-          <h1 className="text-2xl font-bold text-gray-800">{user.name}</h1>
-          <p className="text-gray-600 mt-1">{user.role}</p>
-          <p className="text-sm text-gray-500">{user.location}</p>
-          <p className="mt-4 text-gray-700">{user.bio}</p>
+        <div className="ml-40 pt-6">
+          <h1 className="text-3xl font-extrabold text-yellow-400">
+            {user.name}
+          </h1>
+          <p className="text-yellow-200 mt-1">{user.role}</p>
+          <p className="text-yellow-300">{user.location}</p>
+          <p className="mt-4 text-gray-200">{user.bio}</p>
 
           {/* Social Links */}
-          <div className="mt-4 flex gap-4">
+          <div className="mt-4 flex gap-6">
             {user.socials?.instagram && (
               <a
                 href={user.socials.instagram}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-blue-500 hover:underline"
+                className="flex items-center gap-2 text-yellow-400 hover:text-yellow-300 transition"
               >
-                Instagram
+                📸 Instagram
               </a>
             )}
             {user.socials?.website && (
@@ -103,19 +99,19 @@ const ViewProfile = () => {
                 href={user.socials.website}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-blue-500 hover:underline"
+                className="flex items-center gap-2 text-yellow-400 hover:text-yellow-300 transition"
               >
-                Website
+                🎥 Website
               </a>
             )}
           </div>
 
           {/* Message Button */}
           <button
-            className="mt-6 bg-blue-600 text-white py-2 px-6 rounded-full hover:bg-blue-700 block"
+            className="mt-6 bg-yellow-400 text-black py-2 px-6 rounded-full hover:bg-yellow-300 font-bold flex items-center gap-2 shadow-lg"
             onClick={() => navigate(`/chatbox/${id}`)}
           >
-            Message
+            💬 Message
           </button>
         </div>
       </div>

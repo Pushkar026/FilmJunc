@@ -1,105 +1,139 @@
 import { useState } from "react";
+
 const Signup = () => {
-  //Creating usestate to save data of input fields
-  const [formData, setformdata] = useState({
+  const [formData, setFormData] = useState({
     username: "",
     email: "",
     password: "",
   });
 
-  //creating handlechange
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setformdata({
+    setFormData({
       ...formData,
       [e.target.name]: e.target.value,
     });
   };
 
-  //creating handlesubmit
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
-      //sending request to backend
       const response = await fetch("http://localhost:5000/signup", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
       });
 
-      //logging response
-      console.log("Response Status:", response.status);
       const data = await response.json();
-      console.log("Response Data:", data);
-
-      //poping signup succesfull or not message
       if (response.ok) {
-        alert("Signup Succesfull");
-        setformdata({ username: "", email: "", password: "" });
+        alert(data.message || "Signup Successful!");
+        setFormData({ username: "", email: "", password: "" });
       } else {
         alert("Can't Signup at the moment");
       }
     } catch (error) {
-      console.log("Error:", error);
+      console.error("Error:", error);
       alert("Something went wrong");
     }
   };
-  //sign up ui
+
+  // Fixed positions for icons
+  const iconStyles = [
+    { top: "10%", left: "5%" },
+    { top: "30%", left: "80%" },
+    { top: "60%", left: "20%" },
+    { top: "75%", left: "70%" },
+  ];
+
+  const icons = ["🎬", "🎥", "🎤", "🍿"];
+
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
+    <div className="relative flex h-screen items-center justify-center bg-gradient-to-br from-yellow-400 via-orange-500 to-red-600 text-white overflow-hidden">
+      {/* Floating icons */}
+      {icons.map((icon, idx) => (
+        <span
+          key={idx}
+          className="absolute text-5xl opacity-70 animate-float"
+          style={{
+            top: iconStyles[idx].top,
+            left: iconStyles[idx].left,
+          }}
+        >
+          {icon}
+        </span>
+      ))}
+
+      {/* Signup Form */}
       <form
+        className="relative z-10 w-full max-w-md rounded-2xl bg-gray-800/70 p-8 shadow-xl backdrop-blur-lg"
         onSubmit={handleSubmit}
-        className="bg-white p-8 rounded-2xl shadow-xl w-full max-w-md"
       >
-        <h2 className="text-3xl font-bold mb-6 text-center text-gray-800">
-          Sign Up
+        <h2 className="mb-6 text-center text-3xl font-bold text-yellow-400">
+          FilmJunc Signup
         </h2>
 
         <label className="block mb-4">
-          <span className="text-gray-700">Username</span>
+          <span className="text-gray-300">Username</span>
           <input
             type="text"
             name="username"
             value={formData.username}
             onChange={handleChange}
-            className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+            className="mt-1 block w-full rounded-xl border border-gray-700 bg-gray-900 px-4 py-3 text-white focus:border-yellow-400 focus:outline-none"
             required
           />
         </label>
 
         <label className="block mb-4">
-          <span className="text-gray-700">Email</span>
+          <span className="text-gray-300">Email</span>
           <input
-            type="Email"
+            type="email"
             name="email"
             value={formData.email}
             onChange={handleChange}
-            className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+            className="mt-1 block w-full rounded-xl border border-gray-700 bg-gray-900 px-4 py-3 text-white focus:border-yellow-400 focus:outline-none"
             required
           />
         </label>
 
         <label className="block mb-6">
-          <span className="text-gray-700">Password</span>
+          <span className="text-gray-300">Password</span>
           <input
-            type="Password"
+            type="password"
             name="password"
             value={formData.password}
             onChange={handleChange}
-            className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+            className="mt-1 block w-full rounded-xl border border-gray-700 bg-gray-900 px-4 py-3 text-white focus:border-yellow-400 focus:outline-none"
             required
           />
         </label>
 
         <button
           type="submit"
-          className="w-full bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded-lg transition duration-200"
+          className="w-full rounded-xl bg-yellow-400 px-4 py-3 font-semibold text-black transition hover:bg-yellow-300"
         >
           Create Account
         </button>
+
+        <p className="mt-6 text-center text-sm text-gray-400">
+          Already have an account?{" "}
+          <a href="/login" className="text-yellow-400 hover:underline">
+            Login
+          </a>
+        </p>
       </form>
+
+      {/* Floating animation */}
+      <style>
+        {`
+          @keyframes float { 
+            0%, 100% { transform: translateY(0) rotate(0deg); } 
+            50% { transform: translateY(-20px) rotate(15deg); } 
+          }
+          .animate-float { animation: float 6s ease-in-out infinite; }
+        `}
+      </style>
     </div>
   );
 };
+
 export default Signup;

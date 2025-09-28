@@ -12,16 +12,13 @@ const EditProfile = () => {
   });
 
   const token = localStorage.getItem("token");
-
   const navigate = useNavigate();
 
   useEffect(() => {
     const fetchProfile = async () => {
       try {
         const res = await fetch("http://localhost:5000/userprofile", {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+          headers: { Authorization: `Bearer ${token}` },
         });
         const data = await res.json();
 
@@ -44,33 +41,27 @@ const EditProfile = () => {
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
-    setFormData({
-      ...formData,
-      [e.target.id]: e.target.value,
-    });
+    setFormData({ ...formData, [e.target.id]: e.target.value });
   };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault(); // Prevent the default form submission behavior
+    e.preventDefault();
 
     try {
       const res = await fetch("http://localhost:5000/editprofile", {
-        method: "PUT", // Use PUT to update the profile
+        method: "PUT",
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify(formData), // Send the form data as the request body
+        body: JSON.stringify(formData),
       });
 
       if (res.ok) {
-        // Profile updated successfully
         const data = await res.json();
         console.log("Profile updated:", data);
-        // You can show a success message or redirect the user here
         navigate("/userprofile");
       } else {
-        // Handle errors (e.g., display error message)
         const errorData = await res.json();
         console.error("Error updating profile:", errorData);
         alert("Failed to update profile.");
@@ -82,26 +73,26 @@ const EditProfile = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 p-6">
-      <div className="w-full max-w-4xl mx-auto bg-white shadow-md rounded-xl overflow-hidden">
+    <div className="min-h-screen w-full bg-gradient-to-b from-red-900 via-red-800 to-red-950 p-6 flex justify-center items-start">
+      <div className="w-full max-w-4xl bg-gray-900 shadow-2xl rounded-xl overflow-hidden">
         <div className="p-6">
-          <h1 className="text-2xl font-bold text-gray-800 mb-4">
-            Edit Profile
+          <h1 className="text-3xl font-extrabold text-yellow-400 mb-6">
+            🎬 Edit Profile
           </h1>
 
-          <form onSubmit={handleSubmit}>
+          <form onSubmit={handleSubmit} className="space-y-4">
             {/* Profile Image */}
-            <div className="mb-4">
+            <div>
               <label
                 htmlFor="profileImage"
-                className="block text-sm font-medium text-gray-700"
+                className="block mb-1 text-yellow-300"
               >
-                Profile Image
+                Profile Image URL
               </label>
               <input
                 type="text"
                 id="profileImage"
-                className="mt-1 block w-full border-gray-300 rounded-md"
+                className="w-full px-4 py-2 rounded-lg bg-gray-800 text-yellow-200 placeholder-yellow-500 focus:outline-none focus:ring-2 focus:ring-yellow-400"
                 value={formData.profileImage}
                 onChange={handleChange}
                 placeholder="Enter image URL"
@@ -109,17 +100,17 @@ const EditProfile = () => {
             </div>
 
             {/* Banner Image */}
-            <div className="mb-4">
+            <div>
               <label
                 htmlFor="bannerImage"
-                className="block text-sm font-medium text-gray-700"
+                className="block mb-1 text-yellow-300"
               >
-                Banner Image
+                Banner Image URL
               </label>
               <input
                 type="text"
                 id="bannerImage"
-                className="mt-1 block w-full border-gray-300 rounded-md"
+                className="w-full px-4 py-2 rounded-lg bg-gray-800 text-yellow-200 placeholder-yellow-500 focus:outline-none focus:ring-2 focus:ring-yellow-400"
                 value={formData.bannerImage}
                 onChange={handleChange}
                 placeholder="Enter banner image URL"
@@ -127,35 +118,29 @@ const EditProfile = () => {
             </div>
 
             {/* Name */}
-            <div className="mb-4">
-              <label
-                htmlFor="name"
-                className="block text-sm font-medium text-gray-700"
-              >
+            <div>
+              <label htmlFor="name" className="block mb-1 text-yellow-300">
                 Name
               </label>
               <input
                 type="text"
                 id="name"
-                className="mt-1 block w-full border-gray-300 rounded-md"
+                className="w-full px-4 py-2 rounded-lg bg-gray-800 text-yellow-200 placeholder-yellow-500 focus:outline-none focus:ring-2 focus:ring-yellow-400"
                 value={formData.name}
                 onChange={handleChange}
-                placeholder="ENTER YOUR NAME"
+                placeholder="Enter your name"
               />
             </div>
 
             {/* Role */}
-            <div className="mb-4">
-              <label
-                htmlFor="role"
-                className="block text-sm font-medium text-gray-700"
-              >
+            <div>
+              <label htmlFor="role" className="block mb-1 text-yellow-300">
                 Role
               </label>
               <input
                 type="text"
                 id="role"
-                className="mt-1 block w-full border-gray-300 rounded-md"
+                className="w-full px-4 py-2 rounded-lg bg-gray-800 text-yellow-200 placeholder-yellow-500 focus:outline-none focus:ring-2 focus:ring-yellow-400"
                 value={formData.role}
                 onChange={handleChange}
                 placeholder="Filmmaker"
@@ -163,16 +148,13 @@ const EditProfile = () => {
             </div>
 
             {/* Bio */}
-            <div className="mb-4">
-              <label
-                htmlFor="bio"
-                className="block text-sm font-medium text-gray-700"
-              >
+            <div>
+              <label htmlFor="bio" className="block mb-1 text-yellow-300">
                 Bio
               </label>
               <textarea
                 id="bio"
-                className="mt-1 block w-full border-gray-300 rounded-md"
+                className="w-full px-4 py-2 rounded-lg bg-gray-800 text-yellow-200 placeholder-yellow-500 focus:outline-none focus:ring-2 focus:ring-yellow-400"
                 value={formData.bio}
                 onChange={handleChange}
                 placeholder="Passionate filmmaker with a love for storytelling."
@@ -180,19 +162,17 @@ const EditProfile = () => {
             </div>
 
             {/* Location */}
-            <div className="mb-4">
-              <label
-                htmlFor="location"
-                className="block text-sm font-medium text-gray-700"
-              >
+            <div>
+              <label htmlFor="location" className="block mb-1 text-yellow-300">
                 Location
               </label>
               <input
                 type="text"
                 id="location"
-                className="mt-1 block w-full border-gray-300 rounded-md"
+                className="w-full px-4 py-2 rounded-lg bg-gray-800 text-yellow-200 placeholder-yellow-500 focus:outline-none focus:ring-2 focus:ring-yellow-400"
                 value={formData.location}
                 onChange={handleChange}
+                placeholder="Your city"
               />
             </div>
 
@@ -200,9 +180,9 @@ const EditProfile = () => {
             <div className="mt-6">
               <button
                 type="submit"
-                className="px-6 py-2 bg-blue-500 text-white rounded-full hover:bg-blue-600"
+                className="px-6 py-2 bg-yellow-400 text-black rounded-full font-bold hover:bg-yellow-300 shadow-lg transition"
               >
-                Save Changes
+                💾 Save Changes
               </button>
             </div>
           </form>

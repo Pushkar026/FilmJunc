@@ -1,148 +1,148 @@
+// src/pages/Home.tsx
 import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
+import Navbar from "./navbar";
 
-const Home = () => {
+const Home: React.FC = () => {
   const navigate = useNavigate();
   const [isLoggedIn, setIsLoggedIn] = useState(!!localStorage.getItem("token"));
   const [searchTerm, setSearchTerm] = useState("");
 
   useEffect(() => {
-    // Listen to changes in localStorage (token) and update login status
     setIsLoggedIn(!!localStorage.getItem("token"));
   }, []);
 
-  const handleProfileClick = () => {
-    navigate("/userprofile");
-  };
-
-  const handleLogout = () => {
-    localStorage.removeItem("token"); // Remove token from localStorage
-    setIsLoggedIn(false); // Update the state to reflect logout
-    navigate("/"); // Redirect to home page
-  };
-
   const handleSearch = async () => {
-    const token = localStorage.getItem("token"); // Get token from localStorage
-
+    const token = localStorage.getItem("token");
     if (!token) {
-      // If the token is missing, inform the user or redirect to login
       alert("You must be logged in to perform a search.");
-      return; // Stop the search if no token
+      return;
     }
-
-    if (!searchTerm.trim()) return; // Prevent empty search
+    if (!searchTerm.trim()) return;
 
     try {
-      // Send the token in the Authorization header
       const response = await fetch(
         `http://localhost:5000/api/search?location=${encodeURIComponent(
           searchTerm
         )}`,
-        {
-          method: "GET", // Use GET method for searching
-          headers: {
-            Authorization: `Bearer ${token}`, // Add token to Authorization header
-          },
-        }
+        { method: "GET", headers: { Authorization: `Bearer ${token}` } }
       );
-
-      if (!response.ok) {
-        // Handle response failure (non-200 status codes)
-        throw new Error("Search failed with status: " + response.status);
-      }
-
-      const data = await response.json();
-      console.log(data);
+      if (!response.ok) throw new Error("Search failed: " + response.status);
     } catch (error) {
       console.error("Search failed:", error);
     }
   };
 
-  const handleresult = () => {
+  const handleresult = () =>
     navigate(`/searchresult?location=${encodeURIComponent(searchTerm)}`);
-  };
+
+  const icons = ["🎞️", "🎥", "🎤", "🍿"];
+  const iconPositions = [
+    { top: "10%", left: "5%" },
+    { top: "25%", left: "80%" },
+    { top: "60%", left: "20%" },
+    { top: "75%", left: "70%" },
+  ];
 
   return (
-    <div className="w-full h-screen relative flex flex-col items-center justify-center bg-gradient-to-br from-slate-900 to-gray-800 text-white p-4">
-      {/* 🔍 Search bar - top left */}
+    <div className="w-full relative text-white overflow-hidden">
+      {/* Show Navbar only if logged in */}
       {isLoggedIn && (
-        <div className="absolute top-4 left-4">
-          <input
-            type="text"
-            placeholder="Search for city "
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            onKeyDown={(e) => {
-              if (e.key === "Enter") {
-                handleSearch();
-                handleresult();
-              }
-            }}
-            className="px-4 py-2 rounded-lg text-white"
+        <Navbar
+          searchTerm={searchTerm}
+          setSearchTerm={setSearchTerm}
+          onSearch={() => {
+            handleSearch();
+            handleresult();
+          }}
+          setIsLoggedIn={setIsLoggedIn}
+        />
+      )}
+
+      {/* Hero Section */}
+      <div className="relative w-full h-screen overflow-hidden bg-gradient-to-b from-black via-red-950 to-black">
+        {/* Background Image + Spotlights + Floating Icons */}
+        <div className="absolute inset-0 pointer-events-none">
+          <img
+            src="\images\wp12544578-cinema-theatre-wallpapers.jpg"
+            alt="Cinema background"
+            className="w-full h-full object-cover opacity-40"
           />
+          <div className="absolute top-12 left-1/4 w-72 h-72 bg-yellow-400 rounded-full opacity-20 blur-3xl animate-pulse-slow"></div>
+          <div className="absolute top-20 right-1/4 w-72 h-72 bg-red-500 rounded-full opacity-20 blur-3xl animate-pulse-slow delay-1000"></div>
+
+          {icons.map((icon, idx) => (
+            <span
+              key={idx}
+              className="absolute text-5xl opacity-90 animate-float"
+              style={{
+                top: iconPositions[idx].top,
+                left: iconPositions[idx].left,
+                animationDelay: `${idx * 1}s`,
+              }}
+            >
+              {icon}
+            </span>
+          ))}
         </div>
-      )}
 
-      {/* Search Result*/}
+        {/* Hero Content */}
+        <div className="relative flex flex-col items-center justify-center h-full text-center px-4 z-10">
+          <h1 className="text-5xl md:text-7xl font-extrabold mb-4 text-transparent bg-clip-text bg-gradient-to-r from-amber-300 via-yellow-500 to-amber-600 drop-shadow-[0_0_25px_rgba(255,215,0,0.8)] animate-fadeIn">
+            Welcome to FilmJunc 🎬
+          </h1>
+          <p className="text-lg md:text-xl text-gray-200 font-medium max-w-md text-center animate-fadeIn delay-500">
+            Connect with filmmakers, writers, editors, and creators around you.
+            Build your team and bring stories to life.
+          </p>
 
-      {/* 👤 User icon - top right */}
-      {isLoggedIn && (
-        <div
-          className="absolute top-4 right-4 cursor-pointer"
-          onClick={handleProfileClick}
-        >
-          <span className="text-2xl hover:opacity-80 transition">👤</span>
+          {!isLoggedIn && (
+            <div className="mt-8 flex space-x-4">
+              <a
+                href="/login"
+                className="bg-red-700 hover:bg-red-800 px-6 py-2 rounded-xl text-white font-bold shadow-lg hover:shadow-[0_0_20px_rgba(255,0,0,0.9)] transition"
+              >
+                Login 🎟️
+              </a>
+              <a
+                href="/signup"
+                className="bg-yellow-400 hover:bg-yellow-500 text-black px-6 py-2 rounded-xl font-bold shadow-lg hover:shadow-[0_0_25px_rgba(255,255,0,0.9)] transition"
+              >
+                Sign Up 🏆
+              </a>
+            </div>
+          )}
         </div>
-      )}
+      </div>
 
-      {/* 💬 Messaging icon */}
-      {isLoggedIn && (
-        <div
-          className="absolute top-14 right-4 cursor-pointer"
-          onClick={() => (window.location.href = "/inbox")} // Change to your routing method
-        >
-          <span className="text-2xl hover:opacity-80 transition">💬</span>
-        </div>
-      )}
+      {/* About Section */}
+      <div className="relative z-20 bg-gray-100 text-gray-900 p-10">
+        <h2 className="text-3xl font-bold mb-4 text-red-700">About FilmJunc</h2>
+        <p className="mb-8 text-lg leading-relaxed">
+          FilmJunc is your gateway to the world of filmmaking and creativity.
+          Our platform connects filmmakers, writers, editors, cinematographers,
+          and other passionate creators, enabling them to collaborate, share
+          ideas, and bring stories to life. Whether you're looking for your next
+          project partner or want to showcase your talent, FilmJunc helps you
+          build your cinematic journey.
+        </p>
+      </div>
 
-      {/* Logout Button - only visible if logged in */}
-      {isLoggedIn && (
-        <div className="absolute top-4 right-16">
-          <button
-            onClick={handleLogout}
-            className="bg-red-600 text-white px-4 py-2 rounded-xl font-semibold transition hover:bg-red-700"
-          >
-            Logout
-          </button>
-        </div>
-      )}
+      {/* Animations */}
+      <style>
+        {`
+          @keyframes float { 0%,100% { transform: translateY(0) rotate(0deg); } 50% { transform: translateY(-20px) rotate(15deg); } }
+          .animate-float { animation: float 6s ease-in-out infinite; }
 
-      {/* 🌟 Main content */}
-      <h1 className="text-5xl font-bold mb-4 text-center">
-        Welcome to <span className="text-yellow-400">FilmJunc 🎬</span>
-      </h1>
-      <p className="text-lg text-gray-300 text-center max-w-md">
-        Connect with filmmakers, writers, editors, and other creators around
-        you. Start collaborating and creating today.
-      </p>
+          @keyframes fadeIn { 0% { opacity: 0; transform: translateY(-20px); } 100% { opacity: 1; transform: translateY(0); } }
+          .animate-fadeIn { animation: fadeIn 1s ease forwards; }
+          .animate-fadeIn.delay-500 { animation-delay: 0.5s; }
 
-      {/* Login/Signup buttons if not logged in */}
-      {!isLoggedIn && (
-        <div className="mt-8 flex space-x-4">
-          <a
-            href="/login"
-            className="bg-blue-600 hover:bg-blue-700 px-6 py-2 rounded-xl text-white font-semibold transition"
-          >
-            Login
-          </a>
-          <a
-            href="/signup"
-            className="bg-gray-100 hover:bg-white text-gray-800 px-6 py-2 rounded-xl font-semibold transition"
-          >
-            Sign Up
-          </a>
-        </div>
-      )}
+          @keyframes pulseSlow { 0%,100% { transform: scale(1); opacity: 0.2; } 50% { transform: scale(1.2); opacity: 0.4; } }
+          .animate-pulse-slow { animation: pulseSlow 6s infinite; }
+          .animate-pulse-slow.delay-1000 { animation-delay: 1s; }
+        `}
+      </style>
     </div>
   );
 };

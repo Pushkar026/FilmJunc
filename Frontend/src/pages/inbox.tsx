@@ -46,36 +46,49 @@ const Inbox: React.FC<InboxProps> = ({ currentUserId }) => {
   }, [currentUserId]);
 
   if (loading) {
-    return <div className="p-4">Loading inbox...</div>;
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-black text-yellow-400 text-lg animate-pulse">
+        Loading inbox...
+      </div>
+    );
   }
 
   return (
-    <div className="min-h-screen bg-white p-4 flex flex-col justify-start">
+    <div className="min-h-screen bg-gradient-to-b from-black via-red-950 to-black p-4 flex flex-col gap-3">
+      <h1 className="text-3xl text-yellow-400 font-extrabold mb-4 text-center drop-shadow-[0_0_10px_rgba(255,215,0,0.8)]">
+        🎬 Your Inbox
+      </h1>
+
       {conversations.length > 0 ? (
         conversations.map((conv) => (
           <div
             key={conv._id}
-            className="flex items-center gap-4 p-3 border-b hover:bg-gray-100 cursor-pointer"
+            className="flex items-center gap-4 p-3 rounded-xl cursor-pointer bg-gray-900 hover:bg-red-900 transition hover:shadow-[0_0_20px_rgba(255,215,0,0.7)]"
             onClick={() => navigate(`/chatbox/${conv._id}`)}
           >
             <img
               src={conv.profileImage || "/default-avatar.jpg"}
               alt={conv.username}
-              className="w-12 h-12 rounded-full object-cover"
+              className="w-14 h-14 rounded-full object-cover border-2 border-yellow-400"
             />
             <div className="flex-1">
-              <p className="font-semibold text-black">{conv.username}</p>
-              <p className="text-sm text-gray-600 truncate">
-                {conv.lastMessage || "No messages yet"}
+              <p className="font-bold text-yellow-400">{conv.username}</p>
+              <p className="text-sm text-gray-300 truncate">
+                {conv.lastMessage || "No messages yet 🎤"}
               </p>
             </div>
-            <div className="text-xs text-gray-500">
-              {new Date(conv.updatedAt).toLocaleString()}
+            <div className="text-xs text-gray-400">
+              {new Date(conv.updatedAt).toLocaleTimeString([], {
+                hour: "2-digit",
+                minute: "2-digit",
+              })}
             </div>
           </div>
         ))
       ) : (
-        <p className="text-gray-500">No conversations yet.</p>
+        <p className="text-gray-400 text-center mt-4 animate-pulse">
+          No conversations yet 🎬
+        </p>
       )}
     </div>
   );
