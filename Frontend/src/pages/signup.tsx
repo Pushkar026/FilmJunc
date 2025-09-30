@@ -47,7 +47,7 @@ const Signup = () => {
   const icons = ["🎬", "🎥", "🎤", "🍿"];
 
   return (
-    <div className="relative flex h-screen items-center justify-center bg-gradient-to-br from-yellow-400 via-orange-500 to-red-600 text-white overflow-hidden">
+    <div className="relative flex h-screen items-center justify-center bg-gradient-to-br from-black via-red-950 to-black text-white overflow-hidden">
       {/* Floating icons */}
       {icons.map((icon, idx) => (
         <span

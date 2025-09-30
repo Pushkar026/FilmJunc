@@ -88,9 +88,15 @@ const Home: React.FC = () => {
 
         {/* Hero Content */}
         <div className="relative flex flex-col items-center justify-center h-full text-center px-4 z-10">
-          <h1 className="text-5xl md:text-7xl font-extrabold mb-4 text-transparent bg-clip-text bg-gradient-to-r from-amber-300 via-yellow-500 to-amber-600 drop-shadow-[0_0_25px_rgba(255,215,0,0.8)] animate-fadeIn">
-            Welcome to FilmJunc 🎬
+          <h1 className="text-5xl md:text-7xl font-extrabold mb-4 animate-fadeIn">
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-red-600 via-red-700 to-red-800 drop-shadow-[0_0_25px_rgba(139,0,0,0.9)]">
+              Welcome to
+            </span>{" "}
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-300 via-yellow-500 to-amber-600 drop-shadow-[0_0_25px_rgba(255,215,0,0.8)]">
+              FilmJunc 🎬
+            </span>
           </h1>
+
           <p className="text-lg md:text-xl text-gray-200 font-medium max-w-md text-center animate-fadeIn delay-500">
             Connect with filmmakers, writers, editors, and creators around you.
             Build your team and bring stories to life.
@@ -116,17 +122,88 @@ const Home: React.FC = () => {
       </div>
 
       {/* About Section */}
-      <div className="relative z-20 bg-gray-100 text-gray-900 p-10">
-        <h2 className="text-3xl font-bold mb-4 text-red-700">About FilmJunc</h2>
-        <p className="mb-8 text-lg leading-relaxed">
-          FilmJunc is your gateway to the world of filmmaking and creativity.
-          Our platform connects filmmakers, writers, editors, cinematographers,
-          and other passionate creators, enabling them to collaborate, share
-          ideas, and bring stories to life. Whether you're looking for your next
-          project partner or want to showcase your talent, FilmJunc helps you
-          build your cinematic journey.
-        </p>
+      <div className="relative z-20 w-full text-white p-10 bg-gradient-to-r from-black via-red-950 to-black">
+        <h2 className="text-3xl font-bold mb-8 text-center bg-clip-text text-transparent bg-gradient-to-r from-amber-300 via-yellow-500 to-amber-600">
+          WHAT YOU CAN DO
+        </h2>
+
+        <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8">
+          {/* Card 1 */}
+          <div className="group bg-gray-900 rounded-2xl shadow-lg p-6 transform transition duration-300 hover:scale-105 hover:shadow-[0_0_50px_rgba(255,215,0,0.6)]">
+            <img
+              src="images\pikaso_texttoimage_A-dynamic-scene-with-a-diverse-group-of-filmmakers-1024x701.jpeg"
+              alt="Find Creators"
+              className="w-full h-40 object-cover rounded-xl mb-6 transform transition duration-300 group-hover:scale-105"
+            />
+            <h3 className="text-xl font-semibold mb-3 bg-clip-text text-transparent bg-gradient-to-r from-amber-300 via-yellow-500 to-amber-600">
+              Find Creators
+            </h3>
+            <p className="text-gray-300">
+              Discover filmmakers, writers, and artists around you. Connect and
+              collaborate with ease.
+            </p>
+          </div>
+
+          {/* Card 2 */}
+          <div className="group bg-gray-900 rounded-2xl shadow-lg p-6 transform transition duration-300 hover:scale-105 hover:shadow-[0_0_50px_rgba(255,215,0,0.6)]">
+            <img
+              src="images\attractive-young-woman-working-laptop-early-morning.jpg"
+              alt="Create Profile"
+              className="w-full h-40 object-cover rounded-xl mb-6 transform transition duration-300 group-hover:scale-105"
+            />
+            <h3 className="text-xl font-semibold mb-3 bg-clip-text text-transparent bg-gradient-to-r from-amber-300 via-yellow-500 to-amber-600">
+              Create Your Profile
+            </h3>
+            <p className="text-gray-300">
+              Showcase your skills and build a strong profile to stand out in
+              the FilmJunc community.
+            </p>
+          </div>
+
+          {/* Card 3 */}
+          <div className="group bg-gray-900 rounded-2xl shadow-lg p-6 transform transition duration-300 hover:scale-105 hover:shadow-[0_0_50px_rgba(255,215,0,0.6)]">
+            <img
+              src="images\istockphoto-1372681569-612x612.jpg"
+              alt="Post Your Work"
+              className="w-full h-40 object-cover rounded-xl mb-6 transform transition duration-300 group-hover:scale-105"
+            />
+            <h3 className="text-xl font-semibold mb-3 bg-clip-text text-transparent bg-gradient-to-r from-amber-300 via-yellow-500 to-amber-600">
+              Post Your Work
+            </h3>
+            <p className="text-gray-300">
+              Share your projects, scripts, and ideas (coming soon 🚀). Get
+              feedback and recognition.
+            </p>
+          </div>
+        </div>
       </div>
+
+      {/* Footer */}
+      <footer className="w-full text-gray-300 mt-10">
+        {/* Thin golden line */}
+        <div className="border-t border-yellow-500"></div>
+
+        <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between px-6 py-4">
+          {/* Logo */}
+          <div className="text-2xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-amber-300 via-yellow-500 to-amber-600">
+            FilmJunc 🎬
+          </div>
+
+          {/* Made by */}
+          <div className="mt-2 md:mt-0 text-gray-300 text-center md:text-left">
+            Made by{" "}
+            <a
+              href="https://www.linkedin.com/in/pushkar-yadav-b654a0251"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-amber-400 hover:text-amber-300 font-semibold underline"
+            >
+              Pushkar Yadav
+            </a>{" "}
+            | 2025 © All rights reserved
+          </div>
+        </div>
+      </footer>
 
       {/* Animations */}
       <style>
