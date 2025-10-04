@@ -52,6 +52,17 @@ app.use("/api",MessageRoute)
 const InboxRoute = require("./routes/inbox");
 app.use("/api",InboxRoute)
 
+// serve uploaded files
+const path = require("path");
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
+
+
+const PostRoute = require("./routes/posts");
+app.use("/posts", PostRoute);
+
+
+
+
 
 
 //setting the route

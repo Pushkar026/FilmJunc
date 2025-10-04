@@ -4,7 +4,7 @@ const User = require('../Database/UserSchema');
 const verifyToken = require("../Middleware/verifytoken");
 
 // Route: Search users by location
-router.get('/search',verifyToken, async (req, res) => {
+router.get('/search', verifyToken, async (req, res) => {
   const { location } = req.query;
 
   if (!location) {
@@ -13,7 +13,8 @@ router.get('/search',verifyToken, async (req, res) => {
 
   try {
     const users = await User.find({
-      location: { $regex: new RegExp(location, 'i') } // case-insensitive search
+      location: { $regex: new RegExp(location, 'i') }, // case-insensitive search
+      _id: { $ne: req.user.id } // exclude logged-in user
     }).select('-password'); // do not send password field
 
     res.json(users);

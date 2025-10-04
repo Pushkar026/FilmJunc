@@ -96,7 +96,11 @@ const SearchResult = () => {
                 onClick={() => navigate(`/viewprofile/${user._id}`)}
               >
                 <img
-                  src={user.profileImage || "/default-profile.jpg"}
+                  src={
+                    user.profileImage
+                      ? `http://localhost:5000${user.profileImage}`
+                      : "/default-profile.jpg"
+                  }
                   alt={`${user.name}'s profile`}
                   className="w-32 h-32 rounded-full border-4 border-yellow-400 shadow-md object-cover mx-auto"
                 />

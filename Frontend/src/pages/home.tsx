@@ -147,7 +147,7 @@ const Home: React.FC = () => {
           {/* Card 2 */}
           <div className="group bg-gray-900 rounded-2xl shadow-lg p-6 transform transition duration-300 hover:scale-105 hover:shadow-[0_0_50px_rgba(255,215,0,0.6)]">
             <img
-              src="images\attractive-young-woman-working-laptop-early-morning.jpg"
+              src="images\brad-pitt-attends-sony-pictures-once-upon-a-time-in-news-photo-1163685599-1564157148.jpg"
               alt="Create Profile"
               className="w-full h-40 object-cover rounded-xl mb-6 transform transition duration-300 group-hover:scale-105"
             />
@@ -171,12 +171,41 @@ const Home: React.FC = () => {
               Post Your Work
             </h3>
             <p className="text-gray-300">
-              Share your projects, scripts, and ideas (coming soon 🚀). Get
-              feedback and recognition.
+              Share your projects, scripts, and ideas. Get feedback and
+              recognition.
             </p>
           </div>
         </div>
       </div>
+
+      {/* About Section */}
+      <section className="relative w-full py-20 bg-gradient-to-b from-black via-red-950 to-black text-gray-200 overflow-hidden">
+        {/* Spotlight Glow Effects */}
+        <div className="absolute top-10 left-1/4 w-72 h-72 bg-yellow-500 rounded-full opacity-10 blur-3xl animate-pulse-slow"></div>
+        <div className="absolute bottom-10 right-1/4 w-72 h-72 bg-red-700 rounded-full opacity-10 blur-3xl animate-pulse-slow delay-1000"></div>
+
+        <div className="relative max-w-5xl mx-auto text-center px-6 z-10">
+          {/* Heading */}
+          <h2 className="text-5xl md:text-6xl font-extrabold mb-8 text-transparent bg-clip-text bg-gradient-to-r from-amber-300 via-yellow-500 to-amber-600 drop-shadow-[0_0_25px_rgba(255,215,0,0.9)]">
+            About Us
+          </h2>
+
+          {/* Paragraph */}
+          <p className="text-lg md:text-xl leading-relaxed text-gray-300 drop-shadow-[0_0_10px_rgba(255,215,0,0.4)] max-w-3xl mx-auto">
+            FilmJunc is a collaborative space built for storytellers and
+            creators. Our aim is to connect filmmakers, writers,
+            cinematographers, sound designers, and every creative mind who
+            dreams of bringing stories to life. Whether you’re just starting out
+            or already seasoned, FilmJunc helps you showcase your talent,
+            discover collaborators near you, and build meaningful projects
+            together. We believe cinema is not just an art—it’s a community, and
+            FilmJunc is where that community comes alive.
+          </p>
+
+          {/* Decorative Divider */}
+          <div className="mt-12 w-32 h-1 bg-gradient-to-r from-yellow-400 via-red-500 to-yellow-600 mx-auto rounded-full shadow-[0_0_20px_rgba(255,215,0,0.8)]"></div>
+        </div>
+      </section>
 
       {/* Footer */}
       <footer className="w-full text-gray-300 mt-10">

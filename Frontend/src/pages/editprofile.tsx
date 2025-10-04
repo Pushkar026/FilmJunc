@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 
 const EditProfile = () => {
@@ -6,18 +6,25 @@ const EditProfile = () => {
     name: "",
     bio: "",
     location: "",
-    profileImage: "",
-    bannerImage: "",
     role: "",
   });
+  const [profileFile, setProfileFile] = useState<File | null>(null);
+  const [bannerFile, setBannerFile] = useState<File | null>(null);
+  const [profileImage, setProfileImage] = useState<string>("");
+  const [bannerImage, setBannerImage] = useState<string>("");
 
   const token = localStorage.getItem("token");
   const navigate = useNavigate();
+  const SERVER_URL = "http://localhost:5000";
+
+  // Refs for hidden file inputs
+  const profileInputRef = useRef<HTMLInputElement>(null);
+  const bannerInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     const fetchProfile = async () => {
       try {
-        const res = await fetch("http://localhost:5000/userprofile", {
+        const res = await fetch(`${SERVER_URL}/userprofile`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         const data = await res.json();
@@ -26,10 +33,18 @@ const EditProfile = () => {
           name: data.name || "",
           bio: data.bio || "",
           location: data.location || "",
-          profileImage: data.profileImage || "",
-          bannerImage: data.bannerImage || "",
           role: data.role || "",
         });
+        setProfileImage(
+          data.profileImage
+            ? `${SERVER_URL}${data.profileImage}`
+            : "/images/default-profile.jpg"
+        );
+        setBannerImage(
+          data.bannerImage
+            ? `${SERVER_URL}${data.bannerImage}`
+            : "/images/default-banner.jpg"
+        );
       } catch (err) {
         console.error("Failed to fetch profile:", err);
       }
@@ -44,140 +59,154 @@ const EditProfile = () => {
     setFormData({ ...formData, [e.target.id]: e.target.value });
   };
 
+  const handleProfileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0] || null;
+    if (file) {
+      setProfileFile(file);
+      setProfileImage(URL.createObjectURL(file));
+    }
+  };
+
+  const handleBannerChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0] || null;
+    if (file) {
+      setBannerFile(file);
+      setBannerImage(URL.createObjectURL(file));
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-
     try {
-      const res = await fetch("http://localhost:5000/editprofile", {
+      const form = new FormData();
+      form.append("name", formData.name);
+      form.append("bio", formData.bio);
+      form.append("location", formData.location);
+      form.append("role", formData.role);
+      if (profileFile) form.append("profile", profileFile);
+      if (bannerFile) form.append("banner", bannerFile);
+
+      const res = await fetch(`${SERVER_URL}/editprofile`, {
         method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify(formData),
+        headers: { Authorization: `Bearer ${token}` },
+        body: form,
       });
 
       if (res.ok) {
-        const data = await res.json();
-        console.log("Profile updated:", data);
         navigate("/userprofile");
       } else {
-        const errorData = await res.json();
-        console.error("Error updating profile:", errorData);
-        alert("Failed to update profile.");
+        const err = await res.json();
+        alert(err.message || "Failed to update profile.");
       }
     } catch (err) {
-      console.error("Error:", err);
-      alert("An error occurred while updating the profile.");
+      console.error("Error updating profile:", err);
+      alert("Server error");
     }
   };
 
   return (
-    <div className="min-h-screen w-full bg-gradient-to-b from-red-900 via-red-800 to-red-950 p-6 flex justify-center items-start">
-      <div className="w-full max-w-4xl bg-gray-900 shadow-2xl rounded-xl overflow-hidden">
-        <div className="p-6">
-          <h1 className="text-3xl font-extrabold text-yellow-400 mb-6">
-            🎬 Edit Profile
-          </h1>
+    <div className="min-h-screen w-full bg-gradient-to-b from-red-900 via-red-800 to-red-950 flex justify-center">
+      <div className="w-full max-w-4xl bg-gray-900 shadow-2xl rounded-xl overflow-hidden mt-6">
+        {/* Banner */}
+        <div className="relative h-48 w-full group">
+          <img
+            src={bannerImage}
+            alt="Banner"
+            className="w-full h-full object-cover"
+          />
+          <div
+            className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition cursor-pointer"
+            onClick={() => bannerInputRef.current?.click()}
+          >
+            <div className="w-10 h-10 bg-yellow-400 rounded-full flex items-center justify-center text-black text-2xl font-bold">
+              +
+            </div>
+          </div>
+          <input
+            type="file"
+            accept="image/*"
+            ref={bannerInputRef}
+            onChange={handleBannerChange}
+            className="hidden"
+          />
+        </div>
 
+        {/* Profile Circle */}
+        <div className="relative">
+          <img
+            src={profileImage}
+            alt="Profile"
+            className="w-32 h-32 rounded-full border-4 border-yellow-400 absolute -top-16 left-6 object-cover"
+          />
+          <div
+            className="absolute -top-16 left-6 w-32 h-32 rounded-full flex items-center justify-center opacity-0 hover:opacity-100 transition cursor-pointer"
+            onClick={() => profileInputRef.current?.click()}
+          >
+            <div className="w-10 h-10 bg-yellow-400 rounded-full flex items-center justify-center text-black text-2xl font-bold">
+              +
+            </div>
+          </div>
+          <input
+            type="file"
+            accept="image/*"
+            ref={profileInputRef}
+            onChange={handleProfileChange}
+            className="hidden"
+          />
+        </div>
+
+        {/* Editable Texts */}
+        <div className="ml-44 p-6 space-y-4">
           <form onSubmit={handleSubmit} className="space-y-4">
-            {/* Profile Image */}
-            <div>
-              <label
-                htmlFor="profileImage"
-                className="block mb-1 text-yellow-300"
-              >
-                Profile Image URL
-              </label>
-              <input
-                type="text"
-                id="profileImage"
-                className="w-full px-4 py-2 rounded-lg bg-gray-800 text-yellow-200 placeholder-yellow-500 focus:outline-none focus:ring-2 focus:ring-yellow-400"
-                value={formData.profileImage}
-                onChange={handleChange}
-                placeholder="Enter image URL"
-              />
-            </div>
-
-            {/* Banner Image */}
-            <div>
-              <label
-                htmlFor="bannerImage"
-                className="block mb-1 text-yellow-300"
-              >
-                Banner Image URL
-              </label>
-              <input
-                type="text"
-                id="bannerImage"
-                className="w-full px-4 py-2 rounded-lg bg-gray-800 text-yellow-200 placeholder-yellow-500 focus:outline-none focus:ring-2 focus:ring-yellow-400"
-                value={formData.bannerImage}
-                onChange={handleChange}
-                placeholder="Enter banner image URL"
-              />
-            </div>
-
-            {/* Name */}
             <div>
               <label htmlFor="name" className="block mb-1 text-yellow-300">
                 Name
               </label>
               <input
-                type="text"
                 id="name"
-                className="w-full px-4 py-2 rounded-lg bg-gray-800 text-yellow-200 placeholder-yellow-500 focus:outline-none focus:ring-2 focus:ring-yellow-400"
+                type="text"
                 value={formData.name}
                 onChange={handleChange}
-                placeholder="Enter your name"
+                className="w-full px-4 py-2 rounded-lg bg-gray-800 text-yellow-200 focus:outline-none focus:ring-2 focus:ring-yellow-400"
               />
             </div>
-
-            {/* Role */}
             <div>
               <label htmlFor="role" className="block mb-1 text-yellow-300">
                 Role
               </label>
               <input
-                type="text"
                 id="role"
-                className="w-full px-4 py-2 rounded-lg bg-gray-800 text-yellow-200 placeholder-yellow-500 focus:outline-none focus:ring-2 focus:ring-yellow-400"
+                type="text"
                 value={formData.role}
                 onChange={handleChange}
-                placeholder="Filmmaker"
+                className="w-full px-4 py-2 rounded-lg bg-gray-800 text-yellow-200 focus:outline-none focus:ring-2 focus:ring-yellow-400"
               />
             </div>
-
-            {/* Bio */}
             <div>
               <label htmlFor="bio" className="block mb-1 text-yellow-300">
                 Bio
               </label>
               <textarea
                 id="bio"
-                className="w-full px-4 py-2 rounded-lg bg-gray-800 text-yellow-200 placeholder-yellow-500 focus:outline-none focus:ring-2 focus:ring-yellow-400"
                 value={formData.bio}
                 onChange={handleChange}
-                placeholder="Passionate filmmaker with a love for storytelling."
-              ></textarea>
+                className="w-full px-4 py-2 rounded-lg bg-gray-800 text-yellow-200 focus:outline-none focus:ring-2 focus:ring-yellow-400"
+              />
             </div>
-
-            {/* Location */}
             <div>
               <label htmlFor="location" className="block mb-1 text-yellow-300">
                 Location
               </label>
               <input
-                type="text"
                 id="location"
-                className="w-full px-4 py-2 rounded-lg bg-gray-800 text-yellow-200 placeholder-yellow-500 focus:outline-none focus:ring-2 focus:ring-yellow-400"
+                type="text"
                 value={formData.location}
                 onChange={handleChange}
-                placeholder="Your city"
+                className="w-full px-4 py-2 rounded-lg bg-gray-800 text-yellow-200 focus:outline-none focus:ring-2 focus:ring-yellow-400"
               />
             </div>
 
-            {/* Save Button */}
-            <div className="mt-6">
+            <div className="mt-4">
               <button
                 type="submit"
                 className="px-6 py-2 bg-yellow-400 text-black rounded-full font-bold hover:bg-yellow-300 shadow-lg transition"

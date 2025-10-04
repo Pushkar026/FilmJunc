@@ -10,9 +10,10 @@ const verifyToken = (req, res, next) => {
   }
 
   try {
-    const verified = jwt.verify(token, process.env.JWT_SECRET); // use your secret key
-    req.user = verified; // add user payload to request
-    next(); // continue to the actual route
+    const verified = jwt.verify(token, process.env.JWT_SECRET); // decode token
+    // ensure req.user has an 'id' key — matches your routes
+    req.user = { id: verified.id }; 
+    next();
   } catch (err) {
     res.status(403).json({ message: "Invalid Token" });
   }

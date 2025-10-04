@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
+const SERVER_URL = "http://localhost:5000";
+
 interface Conversation {
   _id: string;
   username: string;
@@ -67,9 +69,13 @@ const Inbox: React.FC<InboxProps> = ({ currentUserId }) => {
             onClick={() => navigate(`/chatbox/${conv._id}`)}
           >
             <img
-              src={conv.profileImage || "/default-avatar.jpg"}
-              alt={conv.username}
-              className="w-14 h-14 rounded-full object-cover border-2 border-yellow-400"
+              src={
+                conv.profileImage
+                  ? `${SERVER_URL}${conv.profileImage}`
+                  : "/images/default-profile.jpg"
+              }
+              alt="Profile"
+              className="w-32 h-32 rounded-full border-4 border-yellow-400 shadow-lg object-cover"
             />
             <div className="flex-1">
               <p className="font-bold text-yellow-400">{conv.username}</p>
