@@ -10,6 +10,7 @@
 # Dependencies
 ####################################
 node_modules/
+Backend/node_modules/
 bower_components/
 
 ####################################
@@ -25,6 +26,7 @@ pnpm-debug.log*
 # Runtime data / uploads
 ####################################
 uploads/
+Backend/uploads/
 tmp/
 temp/
 
@@ -77,3 +79,4 @@ Thumbs.db
 *.bak
 *.old
 *.tmp
+
