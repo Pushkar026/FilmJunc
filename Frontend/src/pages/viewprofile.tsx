@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
+import { API_BASE_URL } from "../config";
 
 interface Post {
   _id: string;
@@ -38,7 +39,7 @@ const ViewProfile = () => {
       if (!token || !id) return;
 
       try {
-        const res = await fetch(`http://localhost:5000/api/users/${id}`, {
+        const res = await fetch(`${API_BASE_URL}/api/users/${id}`, {
           headers: { Authorization: `Bearer ${token}` },
         });
 
@@ -67,7 +68,7 @@ const ViewProfile = () => {
         <img
           src={
             user.bannerImage
-              ? `http://localhost:5000${user.bannerImage}`
+              ? `${API_BASE_URL}${user.bannerImage}`
               : "/images/default-banner.jpg"
           }
           alt="Banner"
@@ -82,7 +83,7 @@ const ViewProfile = () => {
           <img
             src={
               user.profileImage
-                ? `http://localhost:5000${user.profileImage}`
+                ? `${API_BASE_URL}${user.profileImage}`
                 : "/images/default-profile.jpg"
             }
             alt="Profile"
@@ -143,7 +144,7 @@ const ViewProfile = () => {
                 >
                   {post.media && (
                     <img
-                      src={`http://localhost:5000${post.media}`}
+                      src={`${API_BASE_URL}${post.media}`}
                       alt="Post Media"
                       className="w-full h-48 object-cover rounded-md mb-2"
                     />

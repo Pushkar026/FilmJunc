@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
+import { API_BASE_URL } from "../config";
 
 interface Message {
   senderId: string;
@@ -27,7 +28,7 @@ const FullPageChat: React.FC<ChatBoxProps> = ({
     const fetchMessages = async () => {
       try {
         const res = await fetch(
-          `http://localhost:5000/api/messages?user1=${currentUserId}&user2=${selectedUserId}`
+          `${API_BASE_URL}/api/messages?user1=${currentUserId}&user2=${selectedUserId}`
         );
         if (!res.ok) throw new Error("Failed to fetch messages");
         const data: Message[] = await res.json();
@@ -51,7 +52,7 @@ const FullPageChat: React.FC<ChatBoxProps> = ({
     };
 
     try {
-      const res = await fetch("http://localhost:5000/api/messages", {
+      const res = await fetch(`${API_BASE_URL}/api/messages`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(newMessage),

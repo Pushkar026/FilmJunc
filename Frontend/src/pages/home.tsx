@@ -2,6 +2,7 @@
 import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import Navbar from "./navbar";
+import { API_BASE_URL } from "../config";
 
 const Home: React.FC = () => {
   const navigate = useNavigate();
@@ -22,9 +23,7 @@ const Home: React.FC = () => {
 
     try {
       const response = await fetch(
-        `http://localhost:5000/api/search?location=${encodeURIComponent(
-          searchTerm
-        )}`,
+        `${API_BASE_URL}/api/search?location=${encodeURIComponent(searchTerm)}`,
         { method: "GET", headers: { Authorization: `Bearer ${token}` } }
       );
       if (!response.ok) throw new Error("Search failed: " + response.status);

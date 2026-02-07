@@ -1,5 +1,6 @@
 import { useEffect, useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
+import { API_BASE_URL } from "../config";
 
 const EditProfile = () => {
   const [formData, setFormData] = useState({
@@ -15,7 +16,6 @@ const EditProfile = () => {
 
   const token = localStorage.getItem("token");
   const navigate = useNavigate();
-  const SERVER_URL = "http://localhost:5000";
 
   // Refs for hidden file inputs
   const profileInputRef = useRef<HTMLInputElement>(null);
@@ -24,7 +24,7 @@ const EditProfile = () => {
   useEffect(() => {
     const fetchProfile = async () => {
       try {
-        const res = await fetch(`${SERVER_URL}/userprofile`, {
+        const res = await fetch(`${API_BASE_URL}/userprofile`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         const data = await res.json();
@@ -37,12 +37,12 @@ const EditProfile = () => {
         });
         setProfileImage(
           data.profileImage
-            ? `${SERVER_URL}${data.profileImage}`
+            ? `${API_BASE_URL}${data.profileImage}`
             : "/images/default-profile.jpg"
         );
         setBannerImage(
           data.bannerImage
-            ? `${SERVER_URL}${data.bannerImage}`
+            ? `${API_BASE_URL}${data.bannerImage}`
             : "/images/default-banner.jpg"
         );
       } catch (err) {
@@ -86,7 +86,7 @@ const EditProfile = () => {
       if (profileFile) form.append("profile", profileFile);
       if (bannerFile) form.append("banner", bannerFile);
 
-      const res = await fetch(`${SERVER_URL}/editprofile`, {
+      const res = await fetch(`${API_BASE_URL}/editprofile`, {
         method: "PUT",
         headers: { Authorization: `Bearer ${token}` },
         body: form,

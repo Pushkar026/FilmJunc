@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { API_BASE_URL } from "../config";
 
 interface User {
   name: string;
@@ -30,16 +31,17 @@ const UserProfile = () => {
   const [newContent, setNewContent] = useState("");
   const [newMedia, setNewMedia] = useState<File | null>(null);
 
-  const SERVER_URL = "http://localhost:5000";
-
   useEffect(() => {
     const fetchUserData = async () => {
       const token = localStorage.getItem("token");
+
       try {
-        const res = await fetch(`${SERVER_URL}/userprofile`, {
+        const res = await fetch(`${API_BASE_URL}/userprofile`, {
           headers: { Authorization: `Bearer ${token}` },
         });
+
         if (!res.ok) throw new Error("Failed to fetch user");
+
         const data = await res.json();
         setUser(data);
         if (data.posts) setPosts(data.posts);
@@ -47,6 +49,7 @@ const UserProfile = () => {
         console.error(err);
         navigate("/login");
       }
+
       setLoading(false);
     };
 
@@ -62,7 +65,7 @@ const UserProfile = () => {
     if (newMedia) formData.append("media", newMedia);
 
     try {
-      const res = await fetch(`${SERVER_URL}/posts`, {
+      const res = await fetch(`${API_BASE_URL}/posts`, {
         method: "POST",
         headers: { Authorization: `Bearer ${token}` },
         body: formData,
@@ -94,7 +97,7 @@ const UserProfile = () => {
         <img
           src={
             user.bannerImage
-              ? `${SERVER_URL}${user.bannerImage}`
+              ? `${API_BASE_URL}${user.bannerImage}`
               : "/images/default-banner.jpg"
           }
           alt="Banner"
@@ -108,7 +111,7 @@ const UserProfile = () => {
           <img
             src={
               user.profileImage
-                ? `${SERVER_URL}${user.profileImage}`
+                ? `${API_BASE_URL}${user.profileImage}`
                 : "/images/default-profile.jpg"
             }
             alt="Profile"
@@ -184,7 +187,7 @@ const UserProfile = () => {
               >
                 {post.media && (
                   <img
-                    src={`${SERVER_URL}${post.media}`}
+                    src={`${API_BASE_URL}${post.media}`}
                     alt="Post Media"
                     className="w-full h-60 object-cover rounded-lg mb-4"
                   />

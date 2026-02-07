@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-
-const SERVER_URL = "http://localhost:5000";
+import { API_BASE_URL } from "../config";
 
 interface Conversation {
   _id: string;
@@ -24,7 +23,7 @@ const Inbox: React.FC<InboxProps> = ({ currentUserId }) => {
     const fetchInbox = async () => {
       try {
         const res = await fetch(
-          `http://localhost:5000/api/inbox?userId=${currentUserId}`
+          `${API_BASE_URL}/api/inbox?userId=${currentUserId}`
         );
         if (!res.ok) {
           throw new Error(`Error: ${res.status}`);
@@ -71,7 +70,7 @@ const Inbox: React.FC<InboxProps> = ({ currentUserId }) => {
             <img
               src={
                 conv.profileImage
-                  ? `${SERVER_URL}${conv.profileImage}`
+                  ? `${API_BASE_URL}${conv.profileImage}`
                   : "/images/default-profile.jpg"
               }
               alt="Profile"

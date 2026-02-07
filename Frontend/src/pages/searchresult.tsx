@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
+import { API_BASE_URL } from "../config";
 
 interface User {
   _id: string;
@@ -27,7 +28,7 @@ const SearchResult = () => {
 
       try {
         const response = await fetch(
-          `http://localhost:5000/api/search?location=${encodeURIComponent(
+          `${API_BASE_URL}/api/search?location=${encodeURIComponent(
             searchLocation
           )}`,
           {
