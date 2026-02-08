@@ -25,6 +25,8 @@ interface User {
   posts?: Post[];
 }
 
+type CollabStatus = "none" | "pending" | "accepted" | "rejected";
+
 const ViewProfile = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
@@ -33,18 +35,22 @@ const ViewProfile = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    const fetchUser = async () => {
-      const token = localStorage.getItem("token");
-      if (!token || !id) return;
+  const [collabStatus, setCollabStatus] = useState<CollabStatus>("none");
+  const [collabLoading, setCollabLoading] = useState(false);
 
+  useEffect(() => {
+    if (!id) return;
+
+    const token = localStorage.getItem("token");
+    if (!token) return;
+
+    const fetchProfile = async () => {
       try {
         const res = await fetch(`${API_BASE_URL}/api/users/${id}`, {
           headers: { Authorization: `Bearer ${token}` },
         });
-
-        if (!res.ok) throw new Error("Failed to fetch user profile");
-        const data: User = await res.json();
+        if (!res.ok) throw new Error("Failed to fetch profile");
+        const data = await res.json();
         setUser(data);
       } catch (err) {
         console.error(err);
@@ -54,8 +60,47 @@ const ViewProfile = () => {
       }
     };
 
-    fetchUser();
+    const fetchCollabStatus = async () => {
+      try {
+        const res = await fetch(`${API_BASE_URL}/collaboration/status/${id}`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        const data = await res.json();
+        setCollabStatus(data.status);
+      } catch (err) {
+        console.error(err);
+      }
+    };
+
+    fetchProfile();
+    fetchCollabStatus();
   }, [id]);
+
+  const handleCollaborate = async () => {
+    if (!id) return;
+
+    try {
+      setCollabLoading(true);
+      const token = localStorage.getItem("token");
+
+      const res = await fetch(`${API_BASE_URL}/collaboration/send`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ receiverId: id }),
+      });
+
+      if (res.ok) {
+        setCollabStatus("pending"); // 🔥 instant UI update
+      }
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setCollabLoading(false);
+    }
+  };
 
   if (loading) return <p className="text-white p-6">Loading...</p>;
   if (error || !user)
@@ -74,10 +119,9 @@ const ViewProfile = () => {
           alt="Banner"
           className="w-full h-full object-cover opacity-80"
         />
-        <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/50 to-black/80"></div>
       </div>
 
-      {/* Profile Section */}
+      {/* Profile */}
       <div className="relative max-w-5xl mx-auto px-6">
         <div className="absolute -top-16 left-6">
           <img
@@ -87,7 +131,7 @@ const ViewProfile = () => {
                 : "/images/default-profile.jpg"
             }
             alt="Profile"
-            className="w-32 h-32 rounded-full border-4 border-yellow-400 shadow-lg object-cover"
+            className="w-32 h-32 rounded-full border-4 border-yellow-400 object-cover"
           />
         </div>
 
@@ -95,69 +139,69 @@ const ViewProfile = () => {
           <h1 className="text-3xl font-extrabold text-yellow-400">
             {user.name}
           </h1>
-          <p className="text-yellow-200 mt-1">{user.role}</p>
+          <p className="text-yellow-200">{user.role}</p>
           <p className="text-yellow-300">{user.location}</p>
           <p className="mt-4 text-gray-200">{user.bio}</p>
 
-          {/* Social Links */}
-          <div className="mt-4 flex gap-6">
-            {user.socials?.instagram && (
-              <a
-                href={user.socials.instagram}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center gap-2 text-yellow-400 hover:text-yellow-300 transition"
+          {/* Action Buttons */}
+          <div className="mt-6 flex gap-4 flex-wrap">
+            <button
+              onClick={() => navigate(`/chatbox/${id}`)}
+              className="bg-yellow-400 text-black py-2 px-6 rounded-full font-bold hover:bg-yellow-300"
+            >
+              💬 Message
+            </button>
+
+            {collabStatus === "none" && (
+              <button
+                onClick={handleCollaborate}
+                disabled={collabLoading}
+                className="border-2 border-yellow-400 text-yellow-400 py-2 px-6 rounded-full hover:bg-yellow-400 hover:text-black font-bold"
               >
-                📸 Instagram
-              </a>
+                {collabLoading ? "Sending..." : "Collaborate"}
+              </button>
             )}
-            {user.socials?.website && (
-              <a
-                href={user.socials.website}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center gap-2 text-yellow-400 hover:text-yellow-300 transition"
+
+            {collabStatus === "pending" && (
+              <button
+                disabled
+                className="border-2 border-yellow-400 text-yellow-400 py-2 px-6 rounded-full opacity-60 cursor-not-allowed"
               >
-                🎥 Website
-              </a>
+                Requested
+              </button>
+            )}
+
+            {collabStatus === "accepted" && (
+              <button
+                disabled
+                className="bg-yellow-400 text-black py-2 px-6 rounded-full font-bold cursor-default"
+              >
+                🤝 Collaborators
+              </button>
             )}
           </div>
-
-          {/* Message Button */}
-          <button
-            className="mt-6 bg-yellow-400 text-black py-2 px-6 rounded-full hover:bg-yellow-300 font-bold flex items-center gap-2 shadow-lg"
-            onClick={() => navigate(`/chatbox/${id}`)}
-          >
-            💬 Message
-          </button>
         </div>
 
-        {/* User Posts */}
+        {/* Posts */}
         <div className="mt-12">
           <h2 className="text-2xl font-bold text-yellow-400 mb-4">Posts</h2>
+
           {user.posts && user.posts.length > 0 ? (
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               {user.posts.map((post) => (
-                <div
-                  key={post._id}
-                  className="bg-gray-800/70 shadow-lg rounded-2xl p-4 text-white backdrop-blur-md"
-                >
+                <div key={post._id} className="bg-gray-800 p-4 rounded-xl">
                   {post.media && (
                     <img
                       src={`${API_BASE_URL}${post.media}`}
-                      alt="Post Media"
                       className="w-full h-48 object-cover rounded-md mb-2"
                     />
                   )}
-                  <p className="text-gray-200">{post.content}</p>
-                  <p className="text-sm text-gray-400 mt-2">
-                    {new Date(post.createdAt).toLocaleString()}
-                  </p>
+                  <p>{post.content}</p>
                 </div>
               ))}
             </div>
           ) : (
-            <p className="text-gray-200">No posts yet.</p>
+            <p className="text-gray-400">No posts yet.</p>
           )}
         </div>
       </div>

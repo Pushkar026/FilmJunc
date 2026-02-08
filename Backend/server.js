@@ -56,6 +56,11 @@ app.use("/api",InboxRoute)
 const path = require("path");
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
+// collaboration route
+const CollaborationRoute = require("./routes/collaboration");
+app.use("/collaboration", CollaborationRoute);
+
+
 
 const PostRoute = require("./routes/posts");
 app.use("/posts", PostRoute);

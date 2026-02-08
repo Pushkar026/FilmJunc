@@ -9,6 +9,7 @@ import SearchResult from "./pages/searchresult";
 import ViewProfile from "./pages/viewprofile";
 import ChatBoxWrapper from "./pages/chatboxwrapper";
 import InboxWrapper from "./pages/inobxwrapper";
+import Collaborators from "./pages/collaborators";
 
 function App() {
   return (
@@ -23,6 +24,7 @@ function App() {
         <Route path="/viewprofile/:id" element={<ViewProfile />} />
         <Route path="/chatbox/:selectedUserId" element={<ChatBoxWrapper />} />
         <Route path="inbox" element={<InboxWrapper />} />
+        <Route path="/collaborators" element={<Collaborators />} />
       </Routes>
     </Router>
   );
