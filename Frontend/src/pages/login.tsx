@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { API_BASE_URL } from "../config";
 
 const Login = () => {
@@ -7,6 +7,7 @@ const Login = () => {
     username: "",
     password: "",
   });
+
   const navigate = useNavigate();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -16,23 +17,25 @@ const Login = () => {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
     try {
       const res = await fetch(`${API_BASE_URL}/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          username: formData.username,
-          password: formData.password,
-        }),
+        body: JSON.stringify(formData),
       });
 
-      const data = await res.json(); // backend response
+      const data = await res.json();
 
       if (res.ok) {
         localStorage.setItem("token", data.token);
-        localStorage.setItem("userId", data.user._id);
+        localStorage.setItem("user", JSON.stringify(data.user));
 
-        navigate("/"); // redirect
+        if (!data.user.profileCompleted) {
+          navigate("/editprofile");
+        } else {
+          navigate("/");
+        }
       } else {
         alert(data.message || "Login failed");
       }
@@ -42,7 +45,6 @@ const Login = () => {
     }
   };
 
-  // Fixed positions for floating icons
   const icons = ["🎬", "🎥", "🎤", "🍿"];
   const iconPositions = [
     { top: "10%", left: "5%" },
@@ -52,8 +54,18 @@ const Login = () => {
   ];
 
   return (
-    <div className="relative flex h-screen items-center justify-center bg-gradient-to-br from-black via-red-950 to-black text-white overflow-hidden">
-      {/* Floating icons */}
+    <div className="relative flex flex-col h-screen bg-gradient-to-br from-black via-red-950 to-black text-white overflow-hidden">
+      {/* Floating Logo (Using Link) */}
+      <div className="absolute top-6 left-6 z-20">
+        <Link
+          to="/"
+          className="text-2xl font-extrabold text-yellow-400 hover:text-yellow-300 hover:scale-105 transition duration-300"
+        >
+          🎬 FilmJunc
+        </Link>
+      </div>
+
+      {/* Floating Background Icons */}
       {icons.map((icon, idx) => (
         <span
           key={idx}
@@ -68,55 +80,57 @@ const Login = () => {
         </span>
       ))}
 
-      {/* Login Form */}
-      <form
-        onSubmit={handleSubmit}
-        className="relative z-10 w-full max-w-md rounded-2xl bg-gray-800/70 p-8 shadow-xl backdrop-blur-lg"
-      >
-        <h2 className="mb-6 text-center text-3xl font-bold text-yellow-400">
-          FilmJunc Login
-        </h2>
-
-        <label className="block mb-4">
-          <span className="text-gray-300">Username</span>
-          <input
-            type="text"
-            name="username"
-            value={formData.username}
-            onChange={handleChange}
-            className="mt-1 block w-full rounded-xl border border-gray-700 bg-gray-900 px-4 py-3 text-white focus:border-yellow-400 focus:outline-none"
-            required
-          />
-        </label>
-
-        <label className="block mb-6">
-          <span className="text-gray-300">Password</span>
-          <input
-            type="password"
-            name="password"
-            value={formData.password}
-            onChange={handleChange}
-            className="mt-1 block w-full rounded-xl border border-gray-700 bg-gray-900 px-4 py-3 text-white focus:border-yellow-400 focus:outline-none"
-            required
-          />
-        </label>
-
-        <button
-          type="submit"
-          className="w-full rounded-xl bg-yellow-400 px-4 py-3 font-semibold text-black transition hover:bg-yellow-300"
+      {/* Center Form */}
+      <div className="flex flex-1 items-center justify-center">
+        <form
+          onSubmit={handleSubmit}
+          className="relative z-10 w-full max-w-md rounded-2xl bg-gray-800/70 p-8 shadow-xl backdrop-blur-lg"
         >
-          Login
-        </button>
+          <h2 className="mb-6 text-center text-3xl font-bold text-yellow-400">
+            FilmJunc Login
+          </h2>
 
-        <p className="mt-6 text-center text-sm text-gray-400">
-          Don't have an account?{" "}
-          <a href="/signup" className="text-yellow-400 hover:underline">
-            Sign Up
-          </a>
-        </p>
-      </form>
+          <label className="block mb-4">
+            <span className="text-gray-300">Username</span>
+            <input
+              type="text"
+              name="username"
+              value={formData.username}
+              onChange={handleChange}
+              className="mt-1 block w-full rounded-xl border border-gray-700 bg-gray-900 px-4 py-3 text-white focus:border-yellow-400 focus:outline-none"
+              required
+            />
+          </label>
 
-      {/* Floating animation */}
+          <label className="block mb-6">
+            <span className="text-gray-300">Password</span>
+            <input
+              type="password"
+              name="password"
+              value={formData.password}
+              onChange={handleChange}
+              className="mt-1 block w-full rounded-xl border border-gray-700 bg-gray-900 px-4 py-3 text-white focus:border-yellow-400 focus:outline-none"
+              required
+            />
+          </label>
+
+          <button
+            type="submit"
+            className="w-full rounded-xl bg-yellow-400 px-4 py-3 font-semibold text-black transition hover:bg-yellow-300"
+          >
+            Login
+          </button>
+
+          <p className="mt-6 text-center text-sm text-gray-400">
+            Don't have an account?{" "}
+            <Link to="/signup" className="text-yellow-400 hover:underline">
+              Sign Up
+            </Link>
+          </p>
+        </form>
+      </div>
+
+      {/* Floating Animation */}
       <style>
         {`
           @keyframes float { 

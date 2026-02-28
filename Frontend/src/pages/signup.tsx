@@ -1,7 +1,10 @@
 import { useState } from "react";
+import { useNavigate, Link } from "react-router-dom";
 import { API_BASE_URL } from "../config";
 
 const Signup = () => {
+  const navigate = useNavigate();
+
   const [formData, setFormData] = useState({
     username: "",
     email: "",
@@ -17,6 +20,7 @@ const Signup = () => {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
     try {
       const response = await fetch(`${API_BASE_URL}/signup`, {
         method: "POST",
@@ -25,11 +29,14 @@ const Signup = () => {
       });
 
       const data = await response.json();
+
       if (response.ok) {
-        alert(data.message || "Signup Successful!");
-        setFormData({ username: "", email: "", password: "" });
+        localStorage.setItem("token", data.token);
+        localStorage.setItem("user", JSON.stringify(data.user));
+
+        navigate("/editprofile");
       } else {
-        alert("Can't Signup at the moment");
+        alert(data.message || "Signup failed");
       }
     } catch (error) {
       console.error("Error:", error);
@@ -37,7 +44,6 @@ const Signup = () => {
     }
   };
 
-  // Fixed positions for icons
   const iconStyles = [
     { top: "10%", left: "5%" },
     { top: "30%", left: "80%" },
@@ -49,7 +55,17 @@ const Signup = () => {
 
   return (
     <div className="relative flex h-screen items-center justify-center bg-gradient-to-br from-black via-red-950 to-black text-white overflow-hidden">
-      {/* Floating icons */}
+      {/* Floating Logo */}
+      <div className="absolute top-6 left-6 z-20">
+        <Link
+          to="/"
+          className="text-2xl font-extrabold text-yellow-400 hover:text-yellow-300 hover:scale-105 transition duration-300"
+        >
+          🎬 FilmJunc
+        </Link>
+      </div>
+
+      {/* Floating Background Icons */}
       {icons.map((icon, idx) => (
         <span
           key={idx}
@@ -57,13 +73,13 @@ const Signup = () => {
           style={{
             top: iconStyles[idx].top,
             left: iconStyles[idx].left,
+            animationDelay: `${idx * 1}s`,
           }}
         >
           {icon}
         </span>
       ))}
 
-      {/* Signup Form */}
       <form
         className="relative z-10 w-full max-w-md rounded-2xl bg-gray-800/70 p-8 shadow-xl backdrop-blur-lg"
         onSubmit={handleSubmit}
@@ -117,13 +133,12 @@ const Signup = () => {
 
         <p className="mt-6 text-center text-sm text-gray-400">
           Already have an account?{" "}
-          <a href="/login" className="text-yellow-400 hover:underline">
+          <Link to="/login" className="text-yellow-400 hover:underline">
             Login
-          </a>
+          </Link>
         </p>
       </form>
 
-      {/* Floating animation */}
       <style>
         {`
           @keyframes float { 

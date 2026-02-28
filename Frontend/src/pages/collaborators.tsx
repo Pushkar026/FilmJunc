@@ -59,7 +59,7 @@ const Collaborators = () => {
                   src={
                     c.profileImage
                       ? `${API_BASE_URL}${c.profileImage}`
-                      : "/images/default-profile.jpg"
+                      : "images/10337609.png"
                   }
                   className="w-14 h-14 rounded-full border-2 border-yellow-400 object-cover"
                 />

@@ -10,8 +10,30 @@ const Home: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState("");
 
   useEffect(() => {
-    setIsLoggedIn(!!localStorage.getItem("token"));
-  }, []);
+    const token = localStorage.getItem("token");
+    const userString = localStorage.getItem("user");
+
+    if (!token) {
+      setIsLoggedIn(false);
+      return;
+    }
+
+    setIsLoggedIn(true);
+
+    // 🔥 If user object missing, force logout
+    if (!userString) {
+      localStorage.removeItem("token");
+      setIsLoggedIn(false);
+      return;
+    }
+
+    const user = JSON.parse(userString);
+
+    // 🔥 Enforce onboarding
+    if (!user.profileCompleted) {
+      navigate("/editprofile", { replace: true });
+    }
+  }, [navigate]);
 
   const handleSearch = async () => {
     const token = localStorage.getItem("token");
@@ -60,13 +82,7 @@ const Home: React.FC = () => {
 
       {/* Hero Section */}
       <div className="relative w-full h-screen overflow-hidden bg-gradient-to-b from-black via-red-950 to-black">
-        {/* Background Image + Spotlights + Floating Icons */}
         <div className="absolute inset-0 pointer-events-none">
-          <img
-            src="\images\wp12544578-cinema-theatre-wallpapers.jpg"
-            alt="Cinema background"
-            className="w-full h-full object-cover opacity-40"
-          />
           <div className="absolute top-12 left-1/4 w-72 h-72 bg-yellow-400 rounded-full opacity-20 blur-3xl animate-pulse-slow"></div>
           <div className="absolute top-20 right-1/4 w-72 h-72 bg-red-500 rounded-full opacity-20 blur-3xl animate-pulse-slow delay-1000"></div>
 

@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, Link } from "react-router-dom";
 import { API_BASE_URL } from "../config";
 
 interface Post {
@@ -93,7 +93,7 @@ const ViewProfile = () => {
       });
 
       if (res.ok) {
-        setCollabStatus("pending"); // 🔥 instant UI update
+        setCollabStatus("pending");
       }
     } catch (err) {
       console.error(err);
@@ -103,32 +103,43 @@ const ViewProfile = () => {
   };
 
   if (loading) return <p className="text-white p-6">Loading...</p>;
+
   if (error || !user)
     return <p className="text-white p-6">{error || "User not found"}</p>;
 
   return (
-    <div className="min-h-screen w-full bg-black text-white">
+    <div className="min-h-screen w-full bg-black text-white relative">
+      {/* 🎬 FilmJunc Logo - Fixed Top Left */}
+      <div className="absolute top-6 left-6 z-20">
+        <Link
+          to="/"
+          className="text-2xl font-extrabold text-yellow-400 hover:text-yellow-300 hover:scale-105 transition duration-300"
+        >
+          🎬 FilmJunc
+        </Link>
+      </div>
+
       {/* Banner */}
       <div className="h-48 w-full relative">
         <img
           src={
             user.bannerImage
               ? `${API_BASE_URL}${user.bannerImage}`
-              : "/images/default-banner.jpg"
+              : "/images/ChatGPT Image Feb 24, 2026, 03_44_06 PM.png"
           }
           alt="Banner"
           className="w-full h-full object-cover opacity-80"
         />
       </div>
 
-      {/* Profile */}
+      {/* Profile Section */}
       <div className="relative max-w-5xl mx-auto px-6">
         <div className="absolute -top-16 left-6">
           <img
             src={
               user.profileImage
                 ? `${API_BASE_URL}${user.profileImage}`
-                : "/images/default-profile.jpg"
+                : "/images/10337609.png"
             }
             alt="Profile"
             className="w-32 h-32 rounded-full border-4 border-yellow-400 object-cover"
@@ -194,6 +205,7 @@ const ViewProfile = () => {
                     <img
                       src={`${API_BASE_URL}${post.media}`}
                       className="w-full h-48 object-cover rounded-md mb-2"
+                      alt="Post media"
                     />
                   )}
                   <p>{post.content}</p>

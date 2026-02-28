@@ -1,52 +1,52 @@
 const mongoose = require("mongoose");
 
-//database schema
 const UserSchema = new mongoose.Schema({
-    username:{
-        type:String,
-        required:[true,"Username is required"],
-        trim:true,
-        unique:true
-        },
-    
-    email:{
-        type:String,
-        required:[true,"Email is required"],
-        trim:true,
-        unique:true,
-        lowercase:true,
+  username: {
+    type: String,
+    required: [true, "Username is required"],
+    trim: true,
+    unique: true,
+  },
 
+  email: {
+    type: String,
+    required: [true, "Email is required"],
+    trim: true,
+    unique: true,
+    lowercase: true,
+  },
 
-    },
+  password: {
+    type: String,
+    required: [true, "Invalid Password"],
+  },
 
-    password:{
-        type:String,
-        required:[true,"Invalid Password"]
-    },
-    
-    profileImage:String,
-    bannerImage: String,
-    name:String,
-    bio: String,
-    location: String,
-    role: String,
-    socials: {
-      instagram: String,
-      website: String,
-      // add more if needed
-    },
-    portfolio:
-      {
-        title: String,
-        description: String,
-        link: String,
-      },
+  profileImage: String,
+  bannerImage: String,
+  name: String,
+  bio: String,
+  location: String,
+  role: String,
 
-},{timestamps:true})
+  socials: {
+    instagram: String,
+    website: String,
+  },
 
-//exporting schema
+  portfolio: {
+    title: String,
+    description: String,
+    link: String,
+  },
 
-module.exports= mongoose.model("User",UserSchema);
+  profileCompleted: {
+    type: Boolean,
+    default: false,
+  },
+
+}, { timestamps: true });
+
+module.exports = mongoose.model("User", UserSchema);
 
 
 

@@ -1,5 +1,6 @@
 const express = require("express");
 const router = express.Router();
+
 const User = require("../Database/UserSchema");
 const verifyToken = require("../Middleware/verifytoken");
 const multer = require("multer");
@@ -30,15 +31,36 @@ router.put(
       const updates = { ...req.body };
 
       if (req.files) {
-        if (req.files.profile) updates.profileImage = `/uploads/${req.files.profile[0].filename}`;
-        if (req.files.banner) updates.bannerImage = `/uploads/${req.files.banner[0].filename}`;
+        if (req.files.profile) {
+          updates.profileImage = `/uploads/${req.files.profile[0].filename}`;
+        }
+        if (req.files.banner) {
+          updates.bannerImage = `/uploads/${req.files.banner[0].filename}`;
+        }
       }
 
-      const updatedUser = await User.findByIdAndUpdate(userId, { $set: updates }, { new: true });
+      let updatedUser = await User.findByIdAndUpdate(
+        userId,
+        { $set: updates },
+        { new: true }
+      );
 
-      if (!updatedUser) return res.status(404).json({ message: "User not found" });
+      if (!updatedUser) {
+        return res.status(404).json({ message: "User not found" });
+      }
+
+      const isProfileComplete =
+        updatedUser.bio &&
+        updatedUser.location &&
+        updatedUser.role;
+
+      if (isProfileComplete && !updatedUser.profileCompleted) {
+        updatedUser.profileCompleted = true;
+        await updatedUser.save();
+      }
 
       res.json(updatedUser);
+
     } catch (err) {
       console.error("Error updating profile:", err);
       res.status(500).json({ message: "Server error" });

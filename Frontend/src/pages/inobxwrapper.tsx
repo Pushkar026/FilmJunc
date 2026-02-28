@@ -1,8 +1,17 @@
-import React from "react";
-import Inbox from "./inbox"; // Adjust import to match your folder structure
+import React, { useEffect, useState } from "react";
+import Inbox from "./inbox";
 
 const InboxWrapper: React.FC = () => {
-  const currentUserId = localStorage.getItem("userId") || "";
+  const [currentUserId, setCurrentUserId] = useState<string | null>(null);
+
+  useEffect(() => {
+    const userString = localStorage.getItem("user");
+
+    if (userString) {
+      const user = JSON.parse(userString);
+      setCurrentUserId(user._id);
+    }
+  }, []);
 
   if (!currentUserId) {
     return (

@@ -9,17 +9,25 @@ const EditProfile = () => {
     location: "",
     role: "",
   });
+
   const [profileFile, setProfileFile] = useState<File | null>(null);
   const [bannerFile, setBannerFile] = useState<File | null>(null);
-  const [profileImage, setProfileImage] = useState<string>("");
-  const [bannerImage, setBannerImage] = useState<string>("");
+  const [profileImage, setProfileImage] = useState<string>(
+    "/images/10337609.png"
+  );
+  const [bannerImage, setBannerImage] = useState<string>(
+    "/images/ChatGPT Image Feb 24, 2026, 03_44_06 PM.png"
+  );
 
   const token = localStorage.getItem("token");
   const navigate = useNavigate();
 
-  // Refs for hidden file inputs
   const profileInputRef = useRef<HTMLInputElement>(null);
   const bannerInputRef = useRef<HTMLInputElement>(null);
+
+  // 🔥 Detect onboarding mode
+  const storedUser = JSON.parse(localStorage.getItem("user") || "{}");
+  const isFirstTime = !storedUser.profileCompleted;
 
   useEffect(() => {
     const fetchProfile = async () => {
@@ -27,6 +35,7 @@ const EditProfile = () => {
         const res = await fetch(`${API_BASE_URL}/userprofile`, {
           headers: { Authorization: `Bearer ${token}` },
         });
+
         const data = await res.json();
 
         setFormData({
@@ -35,15 +44,17 @@ const EditProfile = () => {
           location: data.location || "",
           role: data.role || "",
         });
+
         setProfileImage(
           data.profileImage
             ? `${API_BASE_URL}${data.profileImage}`
-            : "/images/default-profile.jpg"
+            : "/images/10337609.png"
         );
+
         setBannerImage(
           data.bannerImage
             ? `${API_BASE_URL}${data.bannerImage}`
-            : "/images/default-banner.jpg"
+            : "/images/ChatGPT Image Feb 24, 2026, 03_44_06 PM.png"
         );
       } catch (err) {
         console.error("Failed to fetch profile:", err);
@@ -77,12 +88,20 @@ const EditProfile = () => {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
+    // 🔥 Required onboarding validation
+    if (!formData.role || !formData.bio || !formData.location) {
+      alert("Please fill Role, Bio and Location.");
+      return;
+    }
+
     try {
       const form = new FormData();
       form.append("name", formData.name);
       form.append("bio", formData.bio);
       form.append("location", formData.location);
       form.append("role", formData.role);
+
       if (profileFile) form.append("profile", profileFile);
       if (bannerFile) form.append("banner", bannerFile);
 
@@ -92,11 +111,18 @@ const EditProfile = () => {
         body: form,
       });
 
+      const updatedUser = await res.json();
+
       if (res.ok) {
-        navigate("/userprofile");
+        // ✅ Update localStorage user object
+        const storedUser = JSON.parse(localStorage.getItem("user") || "{}");
+        storedUser.profileCompleted = updatedUser.profileCompleted;
+        localStorage.setItem("user", JSON.stringify(storedUser));
+
+        // 🔥 Always go to dashboard after save
+        navigate("/");
       } else {
-        const err = await res.json();
-        alert(err.message || "Failed to update profile.");
+        alert(updatedUser.message || "Failed to update profile.");
       }
     } catch (err) {
       console.error("Error updating profile:", err);
@@ -107,6 +133,13 @@ const EditProfile = () => {
   return (
     <div className="min-h-screen w-full bg-gradient-to-b from-red-900 via-red-800 to-red-950 flex justify-center">
       <div className="w-full max-w-4xl bg-gray-900 shadow-2xl rounded-xl overflow-hidden mt-6">
+        {/* 🔥 Onboarding Banner */}
+        {isFirstTime && (
+          <div className="bg-yellow-400 text-black text-center py-3 font-semibold">
+            🎬 Complete your profile to start discovering creators!
+          </div>
+        )}
+
         {/* Banner */}
         <div className="relative h-48 w-full group">
           <img
@@ -155,7 +188,7 @@ const EditProfile = () => {
           />
         </div>
 
-        {/* Editable Texts */}
+        {/* Form */}
         <div className="ml-44 p-6 space-y-4">
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
@@ -170,9 +203,10 @@ const EditProfile = () => {
                 className="w-full px-4 py-2 rounded-lg bg-gray-800 text-yellow-200 focus:outline-none focus:ring-2 focus:ring-yellow-400"
               />
             </div>
+
             <div>
               <label htmlFor="role" className="block mb-1 text-yellow-300">
-                Role
+                Role *
               </label>
               <input
                 id="role"
@@ -180,22 +214,26 @@ const EditProfile = () => {
                 value={formData.role}
                 onChange={handleChange}
                 className="w-full px-4 py-2 rounded-lg bg-gray-800 text-yellow-200 focus:outline-none focus:ring-2 focus:ring-yellow-400"
+                required
               />
             </div>
+
             <div>
               <label htmlFor="bio" className="block mb-1 text-yellow-300">
-                Bio
+                Bio *
               </label>
               <textarea
                 id="bio"
                 value={formData.bio}
                 onChange={handleChange}
                 className="w-full px-4 py-2 rounded-lg bg-gray-800 text-yellow-200 focus:outline-none focus:ring-2 focus:ring-yellow-400"
+                required
               />
             </div>
+
             <div>
               <label htmlFor="location" className="block mb-1 text-yellow-300">
-                Location
+                Location *
               </label>
               <input
                 id="location"
@@ -203,6 +241,7 @@ const EditProfile = () => {
                 value={formData.location}
                 onChange={handleChange}
                 className="w-full px-4 py-2 rounded-lg bg-gray-800 text-yellow-200 focus:outline-none focus:ring-2 focus:ring-yellow-400"
+                required
               />
             </div>
 

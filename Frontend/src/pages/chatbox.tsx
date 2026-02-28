@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
+import { Link } from "react-router-dom";
 import { API_BASE_URL } from "../config";
 
 interface Message {
@@ -76,15 +77,22 @@ const FullPageChat: React.FC<ChatBoxProps> = ({
 
   return (
     <div className="w-full h-screen bg-gradient-to-b from-black via-red-950 to-black text-white flex flex-col">
-      {/* Header */}
+      {/* 🔥 Header */}
       <div className="bg-black bg-opacity-70 backdrop-blur-md px-6 py-4 flex justify-between items-center shadow-lg">
-        <h1 className="text-2xl font-extrabold text-yellow-400 cursor-pointer">
-          🎬 FilmJunc Chat
-        </h1>
+        <Link
+          to="/"
+          className="text-2xl font-extrabold text-yellow-400 
+                     hover:text-yellow-300 hover:scale-105 
+                     transition duration-300"
+        >
+          🎬 FilmJunc
+        </Link>
+
+        <h1 className="text-xl font-bold text-yellow-400">Chat</h1>
       </div>
 
       {/* Messages */}
-      <div className="flex-1 overflow-y-auto p-6 space-y-4">
+      <div className="flex-1 overflow-y-auto p-6 space-y-4 flex flex-col">
         {messages.length ? (
           messages.map((msg, idx) => (
             <div
@@ -112,11 +120,11 @@ const FullPageChat: React.FC<ChatBoxProps> = ({
           onChange={(e) => setText(e.target.value)}
           onKeyDown={(e) => e.key === "Enter" && handleSend()}
           placeholder="Type a message..."
-          className="flex-1 px-4 py-3 rounded-l-lg bg-gray-900 text-yellow-300 placeholder-yellow-500 focus:outline-none focus:ring-2 focus:ring-yellow-400 "
+          className="flex-1 px-4 py-3 rounded-l-lg bg-gray-900 text-yellow-300 placeholder-yellow-500 focus:outline-none focus:ring-2 focus:ring-yellow-400"
         />
         <button
           onClick={handleSend}
-          className="bg-yellow-400 text-black px-6 py-2 rounded-r-full font-bold hover:bg-yellow-300 transition"
+          className="bg-yellow-400 text-black px-6 py-2 rounded-r-full font-bold hover:bg-yellow-300 transition duration-300"
         >
           Send 🎟️
         </button>

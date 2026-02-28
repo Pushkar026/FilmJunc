@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { API_BASE_URL } from "../config";
 
 interface Conversation {
@@ -56,22 +56,34 @@ const Inbox: React.FC<InboxProps> = ({ currentUserId }) => {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-black via-red-950 to-black p-4 flex flex-col gap-3">
-      <h1 className="text-3xl text-yellow-400 font-extrabold mb-4 text-center drop-shadow-[0_0_10px_rgba(255,215,0,0.8)]">
-        🎬 Your Inbox
-      </h1>
+      {/* 🔥 Header */}
+      <div className="flex items-center justify-between mb-6">
+        <Link
+          to="/"
+          className="text-2xl font-extrabold text-yellow-400 
+                     hover:text-yellow-300 hover:scale-105 
+                     transition duration-300"
+        >
+          🎬 FilmJunc
+        </Link>
+
+        <h1 className="text-2xl text-yellow-400 font-bold">Your Inbox</h1>
+      </div>
 
       {conversations.length > 0 ? (
         conversations.map((conv) => (
           <div
             key={conv._id}
-            className="flex items-center gap-4 p-3 rounded-xl cursor-pointer bg-gray-900 hover:bg-red-900 transition hover:shadow-[0_0_20px_rgba(255,215,0,0.7)]"
+            className="flex items-center gap-4 p-3 rounded-xl cursor-pointer 
+                       bg-gray-900 hover:bg-red-900 transition duration-300 
+                       hover:shadow-[0_0_20px_rgba(255,215,0,0.7)]"
             onClick={() => navigate(`/chatbox/${conv._id}`)}
           >
             <img
               src={
                 conv.profileImage
                   ? `${API_BASE_URL}${conv.profileImage}`
-                  : "/images/default-profile.jpg"
+                  : "/images/10337609.png"
               }
               alt="Profile"
               className="w-32 h-32 rounded-full border-4 border-yellow-400 shadow-lg object-cover"

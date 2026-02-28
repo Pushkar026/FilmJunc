@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation, useNavigate, Link } from "react-router-dom";
 import { API_BASE_URL } from "../config";
 
 interface User {
@@ -24,7 +24,10 @@ const SearchResult = () => {
   useEffect(() => {
     const fetchResults = async () => {
       const token = localStorage.getItem("token");
-      if (!token || !searchLocation) return;
+      if (!token || !searchLocation) {
+        setLoading(false);
+        return;
+      }
 
       try {
         const response = await fetch(
@@ -53,7 +56,6 @@ const SearchResult = () => {
     fetchResults();
   }, [searchLocation]);
 
-  // Floating icons positions
   const icons = ["🎬", "🎥", "🎤", "🍿"];
   const iconPositions = [
     { top: "10%", left: "5%" },
@@ -64,7 +66,17 @@ const SearchResult = () => {
 
   return (
     <div className="relative min-h-screen bg-gradient-to-br from-black via-red-950 to-black text-white p-6 overflow-hidden">
-      {/* Floating icons */}
+      {/* FilmJunc Logo */}
+      <div className="absolute top-6 left-6 z-20">
+        <Link
+          to="/"
+          className="text-2xl font-extrabold text-yellow-400 hover:text-yellow-300 hover:scale-105 transition duration-300"
+        >
+          🎬 FilmJunc
+        </Link>
+      </div>
+
+      {/* Floating Icons */}
       {icons.map((icon, idx) => (
         <span
           key={idx}
@@ -79,7 +91,7 @@ const SearchResult = () => {
         </span>
       ))}
 
-      <div className="relative z-10">
+      <div className="relative z-10 pt-16">
         <h1 className="text-3xl font-bold mb-6 text-yellow-100">
           Filmmakers and Creators in "{searchLocation}"
         </h1>
@@ -99,8 +111,8 @@ const SearchResult = () => {
                 <img
                   src={
                     user.profileImage
-                      ? `http://localhost:5000${user.profileImage}`
-                      : "/default-profile.jpg"
+                      ? `${API_BASE_URL}${user.profileImage}`
+                      : "images/10337609.png"
                   }
                   alt={`${user.name}'s profile`}
                   className="w-32 h-32 rounded-full border-4 border-yellow-400 shadow-md object-cover mx-auto"
@@ -120,7 +132,7 @@ const SearchResult = () => {
         )}
       </div>
 
-      {/* Floating animation */}
+      {/* Floating Animation */}
       <style>
         {`
           @keyframes float { 

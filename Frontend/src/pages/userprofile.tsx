@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { API_BASE_URL } from "../config";
 
 interface User {
@@ -39,18 +39,15 @@ const UserProfile = () => {
   const [loading, setLoading] = useState(true);
   const [posts, setPosts] = useState<Post[]>([]);
 
-  // Post modal
   const [showPostModal, setShowPostModal] = useState(false);
   const [newContent, setNewContent] = useState("");
   const [newMedia, setNewMedia] = useState<File | null>(null);
 
-  // Collaboration requests
   const [showRequests, setShowRequests] = useState(false);
   const [requests, setRequests] = useState<CollaborationRequest[]>([]);
   const [reqLoading, setReqLoading] = useState(false);
   const [successMsg, setSuccessMsg] = useState<string | null>(null);
 
-  // Collaborators count
   const [collabCount, setCollabCount] = useState(0);
 
   useEffect(() => {
@@ -94,7 +91,6 @@ const UserProfile = () => {
     fetchCollaboratorsCount();
   }, [navigate]);
 
-  // Fetch pending requests
   const fetchRequests = async () => {
     const token = localStorage.getItem("token");
     if (!token) return;
@@ -113,7 +109,6 @@ const UserProfile = () => {
     }
   };
 
-  // Accept / Reject collaboration request
   const respondToRequest = async (
     requestId: string,
     action: "accepted" | "rejected"
@@ -186,14 +181,22 @@ const UserProfile = () => {
   if (!user) return <div>User not found.</div>;
 
   return (
-    <div className="min-h-screen bg-black text-white">
+    <div className="min-h-screen bg-black text-white relative">
+      {/* 🎬 FilmJunc Logo - Top Left */}
+      <Link
+        to="/"
+        className="absolute top-6 left-6 text-2xl font-extrabold text-yellow-400 hover:text-yellow-300 hover:scale-105 transition duration-300 z-50"
+      >
+        🎬 FilmJunc
+      </Link>
+
       {/* Banner */}
       <div className="h-48 w-full relative">
         <img
           src={
             user.bannerImage
               ? `${API_BASE_URL}${user.bannerImage}`
-              : "/images/default-banner.jpg"
+              : "/images/ChatGPT Image Feb 24, 2026, 03_44_06 PM.png"
           }
           alt="Banner"
           className="w-full h-full object-cover opacity-80"
@@ -207,7 +210,7 @@ const UserProfile = () => {
             src={
               user.profileImage
                 ? `${API_BASE_URL}${user.profileImage}`
-                : "/images/default-profile.jpg"
+                : "/images/10337609.png"
             }
             alt="Profile"
             className="w-32 h-32 rounded-full border-4 border-yellow-400 shadow-lg object-cover"
@@ -222,7 +225,6 @@ const UserProfile = () => {
           <p className="text-yellow-300">{user.location}</p>
           <p className="mt-4 text-gray-200">{user.bio}</p>
 
-          {/* Action Buttons */}
           <div className="mt-6 flex gap-4 flex-wrap">
             <button
               onClick={() => navigate("/editprofile")}
@@ -278,7 +280,7 @@ const UserProfile = () => {
                       src={
                         req.sender.profileImage
                           ? `${API_BASE_URL}${req.sender.profileImage}`
-                          : "/images/default-profile.jpg"
+                          : "images/10337609.png"
                       }
                       className="w-12 h-12 rounded-full border-2 border-yellow-400 cursor-pointer"
                       onClick={() => navigate(`/viewprofile/${req.sender._id}`)}
