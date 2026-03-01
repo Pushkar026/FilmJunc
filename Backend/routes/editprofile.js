@@ -4,19 +4,26 @@ const router = express.Router();
 const User = require("../Database/UserSchema");
 const verifyToken = require("../Middleware/verifytoken");
 const multer = require("multer");
-const path = require("path");
+const cloudinary = require("../cloudinary"); // adjust path if needed
 
-// Multer config
-const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, "uploads/");
-  },
-  filename: function (req, file, cb) {
-    cb(null, Date.now() + path.extname(file.originalname));
-  },
-});
-
+// 🔥 Use memory storage instead of disk
+const storage = multer.memoryStorage();
 const upload = multer({ storage });
+
+// Helper to upload buffer to Cloudinary
+const uploadToCloudinary = (fileBuffer, folder) => {
+  return new Promise((resolve, reject) => {
+    cloudinary.uploader
+      .upload_stream(
+        { folder: `filmjunc/${folder}` },
+        (error, result) => {
+          if (error) reject(error);
+          else resolve(result);
+        }
+      )
+      .end(fileBuffer);
+  });
+};
 
 router.put(
   "/editprofile",
@@ -30,13 +37,22 @@ router.put(
       const userId = req.user.id;
       const updates = { ...req.body };
 
-      if (req.files) {
-        if (req.files.profile) {
-          updates.profileImage = `/uploads/${req.files.profile[0].filename}`;
-        }
-        if (req.files.banner) {
-          updates.bannerImage = `/uploads/${req.files.banner[0].filename}`;
-        }
+      // 🔥 Upload profile image
+      if (req.files?.profile) {
+        const result = await uploadToCloudinary(
+          req.files.profile[0].buffer,
+          "profiles"
+        );
+        updates.profileImage = result.secure_url;
+      }
+
+      // 🔥 Upload banner image
+      if (req.files?.banner) {
+        const result = await uploadToCloudinary(
+          req.files.banner[0].buffer,
+          "banners"
+        );
+        updates.bannerImage = result.secure_url;
       }
 
       let updatedUser = await User.findByIdAndUpdate(
