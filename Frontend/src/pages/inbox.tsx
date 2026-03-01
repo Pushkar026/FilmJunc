@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { API_BASE_URL } from "../config";
+import { getImageUrl } from "../utils/getImageUrl";
 
 interface Conversation {
   _id: string;
@@ -80,11 +81,7 @@ const Inbox: React.FC<InboxProps> = ({ currentUserId }) => {
             onClick={() => navigate(`/chatbox/${conv._id}`)}
           >
             <img
-              src={
-                conv.profileImage
-                  ? `${API_BASE_URL}${conv.profileImage}`
-                  : "/images/10337609.png"
-              }
+              src={getImageUrl(conv.profileImage)}
               alt="Profile"
               className="w-32 h-32 rounded-full border-4 border-yellow-400 shadow-lg object-cover"
             />

@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate, Link } from "react-router-dom";
 import { API_BASE_URL } from "../config";
+import { getImageUrl } from "../utils/getImageUrl";
 
 interface User {
   _id: string;
@@ -109,11 +110,7 @@ const SearchResult = () => {
                 onClick={() => navigate(`/viewprofile/${user._id}`)}
               >
                 <img
-                  src={
-                    user.profileImage
-                      ? `${API_BASE_URL}${user.profileImage}`
-                      : "images/10337609.png"
-                  }
+                  src={getImageUrl(user.profileImage)}
                   alt={`${user.name}'s profile`}
                   className="w-32 h-32 rounded-full border-4 border-yellow-400 shadow-md object-cover mx-auto"
                 />

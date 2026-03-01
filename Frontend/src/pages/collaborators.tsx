@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { API_BASE_URL } from "../config";
+import { getImageUrl } from "../utils/getImageUrl";
 
 interface Collaborator {
   _id: string;
@@ -56,12 +57,9 @@ const Collaborators = () => {
                 className="flex items-center gap-4 bg-gray-900 p-4 rounded-xl cursor-pointer hover:bg-gray-800 transition"
               >
                 <img
-                  src={
-                    c.profileImage
-                      ? `${API_BASE_URL}${c.profileImage}`
-                      : "images/10337609.png"
-                  }
+                  src={getImageUrl(c.profileImage)}
                   className="w-14 h-14 rounded-full border-2 border-yellow-400 object-cover"
+                  alt={c.name}
                 />
                 <div>
                   <p className="text-lg font-semibold text-yellow-300">

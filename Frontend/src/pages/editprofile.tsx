@@ -1,6 +1,7 @@
 import { useEffect, useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { API_BASE_URL } from "../config";
+import { getImageUrl } from "../utils/getImageUrl";
 
 const EditProfile = () => {
   const [formData, setFormData] = useState({
@@ -12,6 +13,7 @@ const EditProfile = () => {
 
   const [profileFile, setProfileFile] = useState<File | null>(null);
   const [bannerFile, setBannerFile] = useState<File | null>(null);
+
   const [profileImage, setProfileImage] = useState<string>(
     "/images/10337609.png"
   );
@@ -25,7 +27,6 @@ const EditProfile = () => {
   const profileInputRef = useRef<HTMLInputElement>(null);
   const bannerInputRef = useRef<HTMLInputElement>(null);
 
-  // 🔥 Detect onboarding mode
   const storedUser = JSON.parse(localStorage.getItem("user") || "{}");
   const isFirstTime = !storedUser.profileCompleted;
 
@@ -45,16 +46,14 @@ const EditProfile = () => {
           role: data.role || "",
         });
 
-        setProfileImage(
-          data.profileImage
-            ? `${API_BASE_URL}${data.profileImage}`
-            : "/images/10337609.png"
-        );
+        // ✅ Use helper instead of prefixing
+        setProfileImage(getImageUrl(data.profileImage, "/images/10337609.png"));
 
         setBannerImage(
-          data.bannerImage
-            ? `${API_BASE_URL}${data.bannerImage}`
-            : "/images/ChatGPT Image Feb 24, 2026, 03_44_06 PM.png"
+          getImageUrl(
+            data.bannerImage,
+            "/images/ChatGPT Image Feb 24, 2026, 03_44_06 PM.png"
+          )
         );
       } catch (err) {
         console.error("Failed to fetch profile:", err);
@@ -74,7 +73,7 @@ const EditProfile = () => {
     const file = e.target.files?.[0] || null;
     if (file) {
       setProfileFile(file);
-      setProfileImage(URL.createObjectURL(file));
+      setProfileImage(URL.createObjectURL(file)); // preview
     }
   };
 
@@ -82,14 +81,13 @@ const EditProfile = () => {
     const file = e.target.files?.[0] || null;
     if (file) {
       setBannerFile(file);
-      setBannerImage(URL.createObjectURL(file));
+      setBannerImage(URL.createObjectURL(file)); // preview
     }
   };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    // 🔥 Required onboarding validation
     if (!formData.role || !formData.bio || !formData.location) {
       alert("Please fill Role, Bio and Location.");
       return;
@@ -114,12 +112,10 @@ const EditProfile = () => {
       const updatedUser = await res.json();
 
       if (res.ok) {
-        // ✅ Update localStorage user object
         const storedUser = JSON.parse(localStorage.getItem("user") || "{}");
         storedUser.profileCompleted = updatedUser.profileCompleted;
         localStorage.setItem("user", JSON.stringify(storedUser));
 
-        // 🔥 Always go to dashboard after save
         navigate("/");
       } else {
         alert(updatedUser.message || "Failed to update profile.");
@@ -133,7 +129,6 @@ const EditProfile = () => {
   return (
     <div className="min-h-screen w-full bg-gradient-to-b from-red-900 via-red-800 to-red-950 flex justify-center">
       <div className="w-full max-w-4xl bg-gray-900 shadow-2xl rounded-xl overflow-hidden mt-6">
-        {/* 🔥 Onboarding Banner */}
         {isFirstTime && (
           <div className="bg-yellow-400 text-black text-center py-3 font-semibold">
             🎬 Complete your profile to start discovering creators!
