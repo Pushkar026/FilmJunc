@@ -1,37 +1,56 @@
 // routes/posts.js
+
 const express = require("express");
 const multer = require("multer");
-const path = require("path");
-const Post = require("../Database/PostSchema"); 
+const Post = require("../Database/PostSchema");
 const verifyToken = require("../Middleware/verifytoken");
+const cloudinary = require("../config/cloudinary");
 
 const router = express.Router();
 
-// Multer setup for file uploads
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, path.join(__dirname, "../uploads")); // store uploads in /uploads
-  },
-  filename: (req, file, cb) => {
-    cb(null, Date.now() + path.extname(file.originalname)); // unique filenames
-  },
-});
-
+// Use memory storage (no filesystem needed)
+const storage = multer.memoryStorage();
 const upload = multer({ storage });
 
-// Create a new post
+/*
+CREATE POST
+Uploads media to Cloudinary and saves post in MongoDB
+*/
 router.post("/", verifyToken, upload.single("media"), async (req, res) => {
   try {
     const { content } = req.body;
-    if (!content) return res.status(400).json({ message: "Content is required" });
+
+    if (!content) {
+      return res.status(400).json({ message: "Content is required" });
+    }
+
+    let mediaUrl = null;
+
+    // Upload media to Cloudinary if a file is included
+    if (req.file) {
+      const result = await new Promise((resolve, reject) => {
+        const stream = cloudinary.uploader.upload_stream(
+          { folder: "filmjunc_posts" },
+          (error, result) => {
+            if (error) return reject(error);
+            resolve(result);
+          }
+        );
+
+        stream.end(req.file.buffer);
+      });
+
+      mediaUrl = result.secure_url;
+    }
 
     const newPost = new Post({
-      user: req.user.id,          // uses req.user.id from verifyToken
+      user: req.user.id,
       content,
-      media: req.file ? `/uploads/${req.file.filename}` : "",
+      media: mediaUrl,
     });
 
     const savedPost = await newPost.save();
+
     res.json(savedPost);
   } catch (err) {
     console.error("Error creating post:", err);
@@ -39,10 +58,16 @@ router.post("/", verifyToken, upload.single("media"), async (req, res) => {
   }
 });
 
-// Get posts by a specific user
+/*
+GET POSTS BY USER
+Used for profile pages
+*/
 router.get("/user/:userId", async (req, res) => {
   try {
-    const posts = await Post.find({ user: req.params.userId }).sort({ createdAt: -1 });
+    const posts = await Post.find({ user: req.params.userId }).sort({
+      createdAt: -1,
+    });
+
     res.json(posts);
   } catch (err) {
     console.error("Error fetching posts:", err);
