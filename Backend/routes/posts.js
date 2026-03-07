@@ -4,7 +4,7 @@ const express = require("express");
 const multer = require("multer");
 const Post = require("../Database/PostSchema");
 const verifyToken = require("../Middleware/verifytoken");
-const cloudinary = require("../config/cloudinary");
+const cloudinary = require("../cloudinary");
 
 const router = express.Router();
 
