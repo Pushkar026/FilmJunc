@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { API_BASE_URL } from "../config";
+import { getImageUrl } from "../utils/getImageUrl";
 
 interface Post {
   _id: string;
@@ -122,11 +123,10 @@ const ViewProfile = () => {
       {/* Banner */}
       <div className="h-48 w-full relative">
         <img
-          src={
-            user.bannerImage
-              ? `${API_BASE_URL}${user.bannerImage}`
-              : "/images/ChatGPT Image Feb 24, 2026, 03_44_06 PM.png"
-          }
+          src={getImageUrl(
+            user.bannerImage,
+            "/images/ChatGPT Image Feb 24, 2026, 03_44_06 PM.png"
+          )}
           alt="Banner"
           className="w-full h-full object-cover opacity-80"
         />
@@ -136,11 +136,7 @@ const ViewProfile = () => {
       <div className="relative max-w-5xl mx-auto px-6">
         <div className="absolute -top-16 left-6">
           <img
-            src={
-              user.profileImage
-                ? `${API_BASE_URL}${user.profileImage}`
-                : "/images/10337609.png"
-            }
+            src={getImageUrl(user.profileImage)}
             alt="Profile"
             className="w-32 h-32 rounded-full border-4 border-yellow-400 object-cover"
           />
@@ -203,7 +199,7 @@ const ViewProfile = () => {
                 <div key={post._id} className="bg-gray-800 p-4 rounded-xl">
                   {post.media && (
                     <img
-                      src={`${API_BASE_URL}${post.media}`}
+                      src={getImageUrl(post.media)}
                       className="w-full h-48 object-cover rounded-md mb-2"
                       alt="Post media"
                     />
