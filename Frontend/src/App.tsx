@@ -1,4 +1,7 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { useEffect } from "react";
+import { socket } from "./socket";
+
 import Home from "./pages/home";
 import "./App.css";
 import Signup from "./pages/signup";
@@ -12,6 +15,19 @@ import InboxWrapper from "./pages/inobxwrapper";
 import Collaborators from "./pages/collaborators";
 
 function App() {
+  useEffect(() => {
+    const user = JSON.parse(localStorage.getItem("user") || "{}");
+
+    if (user?._id) {
+      socket.connect();
+      socket.emit("user_online", user._id);
+    }
+
+    return () => {
+      socket.disconnect();
+    };
+  }, []);
+
   return (
     <Router>
       <Routes>
@@ -23,7 +39,7 @@ function App() {
         <Route path="/searchresult" element={<SearchResult />} />
         <Route path="/viewprofile/:id" element={<ViewProfile />} />
         <Route path="/chatbox/:selectedUserId" element={<ChatBoxWrapper />} />
-        <Route path="inbox" element={<InboxWrapper />} />
+        <Route path="/inbox" element={<InboxWrapper />} />
         <Route path="/collaborators" element={<Collaborators />} />
       </Routes>
     </Router>

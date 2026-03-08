@@ -3,79 +3,118 @@ require("dotenv").config();
 const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
+const http = require("http");
+const path = require("path");
+const { Server } = require("socket.io");
 
-//express application
+// socket handler
+const setupSocket = require("./socket/socket");
+
+// express application
 const app = express();
 
-//middleware
-app.use(cors())
-app.use(express.json())
+// middleware
+app.use(cors());
+app.use(express.json());
 
-//getting environment variables
-const PORT = process.env.PORT
-const MONGO_URL = process.env.MONGO_URL
+// environment variables
+const PORT = process.env.PORT;
+const MONGO_URL = process.env.MONGO_URL;
 
-//connecting database
+// =====================
+// DATABASE CONNECTION
+// =====================
+
 mongoose.connect(MONGO_URL)
-.then(()=>console.log("mongodb database succesfully connected "))
-.catch((error)=>console.log("error connecting database",error))
+.then(()=>console.log("MongoDB database successfully connected"))
+.catch((error)=>console.log("Error connecting database",error));
 
-//signup route
-const SignupRoute = require("./routes/signup")
-app.use("/signup",SignupRoute)
 
-//login route
-const LoginRoute = require("./routes/login")
-app.use("/login",LoginRoute)
+// =====================
+// ROUTES
+// =====================
 
-//userprofile route
-const UserprofileRoute = require("./routes/userprofile")
-app.use("/",UserprofileRoute)
+// signup route
+const SignupRoute = require("./routes/signup");
+app.use("/signup",SignupRoute);
 
-//editprofile route
+// login route
+const LoginRoute = require("./routes/login");
+app.use("/login",LoginRoute);
+
+// user profile route
+const UserprofileRoute = require("./routes/userprofile");
+app.use("/",UserprofileRoute);
+
+// edit profile route
 const EditProfileRoutes = require("./routes/editprofile"); 
-app.use('/', EditProfileRoutes);
+app.use("/", EditProfileRoutes);
 
-//search route
-const searchRoutes = require('./routes/search'); 
+// search route
+const searchRoutes = require("./routes/search"); 
 app.use("/api",searchRoutes);
 
-//viewprofile route
+// view profile route
 const ViewProfileRoute = require("./routes/viewprofile");
 app.use("/api",ViewProfileRoute);
 
-//messages route
+// messages route
 const MessageRoute = require("./routes/messages");
-app.use("/api",MessageRoute)
+app.use("/api",MessageRoute);
 
-//inbox route
+// inbox route
 const InboxRoute = require("./routes/inbox");
-app.use("/api",InboxRoute)
-
-// serve uploaded files
-const path = require("path");
-app.use("/uploads", express.static(path.join(__dirname, "uploads")));
+app.use("/api",InboxRoute);
 
 // collaboration route
 const CollaborationRoute = require("./routes/collaboration");
 app.use("/collaboration", CollaborationRoute);
 
-
-
+// posts route
 const PostRoute = require("./routes/posts");
 app.use("/posts", PostRoute);
 
 
+// =====================
+// STATIC FILES
+// =====================
+
+// serve uploaded files
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 
+// =====================
+// SOCKET.IO SETUP
+// =====================
 
+// create HTTP server
+const server = http.createServer(app);
 
-//setting the route
-app.get("/",(req,res)=>{
-    res.send("FILMJUNC BACKEND IS RUNNING")
+// create socket server
+const io = new Server(server,{
+  cors:{
+    origin:"*",
+    methods:["GET","POST"]
+  }
 });
 
-//listening to port
-app.listen(PORT,()=>{
-    console.log("Server is running succesfully")
+// initialize socket logic
+setupSocket(io);
+
+
+// =====================
+// TEST ROUTE
+// =====================
+
+app.get("/",(req,res)=>{
+  res.send("FILMJUNC BACKEND IS RUNNING");
+});
+
+
+// =====================
+// START SERVER
+// =====================
+
+server.listen(PORT,()=>{
+  console.log(`Server running on port ${PORT}`);
 });
