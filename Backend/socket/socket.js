@@ -4,11 +4,13 @@ module.exports = function(io){
 
   io.on("connection",(socket)=>{
 
-    //console.log("User connected:",socket.id);
-
     socket.on("user_online",(userId)=>{
 
-      onlineUsers.set(userId,socket.id);
+      if(!onlineUsers.has(userId)){
+        onlineUsers.set(userId,new Set());
+      }
+
+      onlineUsers.get(userId).add(socket.id);
 
       io.emit("online_users",Array.from(onlineUsers.keys()));
 
@@ -16,11 +18,13 @@ module.exports = function(io){
 
     socket.on("send_message",(data)=>{
 
-      const receiverSocket = onlineUsers.get(data.receiverId);
+      const receiverSockets = onlineUsers.get(data.receiverId);
 
-      if(receiverSocket){
+      if(receiverSockets){
 
-        io.to(receiverSocket).emit("receive_message",data);
+        receiverSockets.forEach(socketId=>{
+          io.to(socketId).emit("receive_message",data);
+        });
 
       }
 
@@ -28,11 +32,13 @@ module.exports = function(io){
 
     socket.on("typing",(data)=>{
 
-      const receiverSocket = onlineUsers.get(data.receiverId);
+      const receiverSockets = onlineUsers.get(data.receiverId);
 
-      if(receiverSocket){
+      if(receiverSockets){
 
-        io.to(receiverSocket).emit("typing",data);
+        receiverSockets.forEach(socketId=>{
+          io.to(socketId).emit("typing",data);
+        });
 
       }
 
@@ -40,11 +46,13 @@ module.exports = function(io){
 
     socket.on("stop_typing",(data)=>{
 
-      const receiverSocket = onlineUsers.get(data.receiverId);
+      const receiverSockets = onlineUsers.get(data.receiverId);
 
-      if(receiverSocket){
+      if(receiverSockets){
 
-        io.to(receiverSocket).emit("stop_typing",data);
+        receiverSockets.forEach(socketId=>{
+          io.to(socketId).emit("stop_typing",data);
+        });
 
       }
 
@@ -52,11 +60,13 @@ module.exports = function(io){
 
     socket.on("message_seen",(data)=>{
 
-      const senderSocket = onlineUsers.get(data.senderId);
+      const senderSockets = onlineUsers.get(data.senderId);
 
-      if(senderSocket){
+      if(senderSockets){
 
-        io.to(senderSocket).emit("message_seen",data);
+        senderSockets.forEach(socketId=>{
+          io.to(socketId).emit("message_seen",data);
+        });
 
       }
 
@@ -64,11 +74,16 @@ module.exports = function(io){
 
     socket.on("disconnect",()=>{
 
-      for(let [userId,socketId] of onlineUsers.entries()){
+      for(const [userId,sockets] of onlineUsers.entries()){
 
-        if(socketId===socket.id){
+        if(sockets.has(socket.id)){
 
-          onlineUsers.delete(userId);
+          sockets.delete(socket.id);
+
+          if(sockets.size === 0){
+            onlineUsers.delete(userId);
+          }
+
           break;
 
         }
@@ -76,8 +91,6 @@ module.exports = function(io){
       }
 
       io.emit("online_users",Array.from(onlineUsers.keys()));
-
-      //console.log("User disconnected:",socket.id);
 
     });
 

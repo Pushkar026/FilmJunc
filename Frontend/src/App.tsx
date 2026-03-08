@@ -22,10 +22,6 @@ function App() {
       socket.connect();
       socket.emit("user_online", user._id);
     }
-
-    return () => {
-      socket.disconnect();
-    };
   }, []);
 
   return (

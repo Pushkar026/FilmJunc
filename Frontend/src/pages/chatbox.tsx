@@ -34,6 +34,12 @@ const ChatBox: React.FC<ChatBoxProps> = ({ currentUserId, selectedUserId }) => {
   const [typing, setTyping] = useState(false);
 
   const chatEndRef = useRef<HTMLDivElement | null>(null);
+  // ensure backend always knows current user socket
+  useEffect(() => {
+    if (currentUserId) {
+      socket.emit("user_online", currentUserId);
+    }
+  }, [currentUserId]);
 
   // ================= RECEIVE MESSAGE =================
   useEffect(() => {
