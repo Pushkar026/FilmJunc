@@ -96,4 +96,20 @@ module.exports = function(io){
 
   });
 
+  socket.on("user_offline", (userId) => {
+
+  const sockets = onlineUsers.get(userId);
+
+  if (sockets) {
+    sockets.delete(socket.id);
+
+    if (sockets.size === 0) {
+      onlineUsers.delete(userId);
+    }
+  }
+
+  io.emit("online_users", Array.from(onlineUsers.keys()));
+
+});
+
 }

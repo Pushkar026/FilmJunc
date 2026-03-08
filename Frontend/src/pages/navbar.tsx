@@ -1,5 +1,6 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
+import { socket } from "../socket";
 
 interface NavbarProps {
   searchTerm: string;
@@ -17,9 +18,18 @@ const Navbar: React.FC<NavbarProps> = ({
   const navigate = useNavigate();
 
   const handleLogout = (): void => {
+    const user = JSON.parse(localStorage.getItem("user") || "{}");
+
+    if (user?._id) {
+      socket.emit("user_offline", user._id);
+    }
+
     localStorage.removeItem("token");
-    setIsLoggedIn(false); // update home state
-    navigate("/"); // go back to home
+    localStorage.removeItem("user");
+
+    setIsLoggedIn(false);
+
+    navigate("/");
   };
 
   return (
