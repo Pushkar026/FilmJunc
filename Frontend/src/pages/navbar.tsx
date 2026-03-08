@@ -18,11 +18,7 @@ const Navbar: React.FC<NavbarProps> = ({
   const navigate = useNavigate();
 
   const handleLogout = (): void => {
-    const user = JSON.parse(localStorage.getItem("user") || "{}");
-
-    if (user?._id) {
-      socket.emit("user_offline", user._id);
-    }
+    socket.disconnect();
 
     localStorage.removeItem("token");
     localStorage.removeItem("user");

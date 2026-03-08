@@ -30,16 +30,9 @@ const ChatBox: React.FC<ChatBoxProps> = ({ currentUserId, selectedUserId }) => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [text, setText] = useState("");
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
-  const [onlineUsers, setOnlineUsers] = useState<string[]>([]);
   const [typing, setTyping] = useState(false);
 
   const chatEndRef = useRef<HTMLDivElement | null>(null);
-  // ensure backend always knows current user socket
-  useEffect(() => {
-    if (currentUserId) {
-      socket.emit("user_online", currentUserId);
-    }
-  }, [currentUserId]);
 
   // ================= RECEIVE MESSAGE =================
   useEffect(() => {
@@ -80,21 +73,6 @@ const ChatBox: React.FC<ChatBoxProps> = ({ currentUserId, selectedUserId }) => {
     };
   }, [selectedUserId]);
 
-  // ================= ONLINE USERS =================
-  useEffect(() => {
-    const onlineHandler = (users: string[]) => {
-      setOnlineUsers(users);
-    };
-
-    socket.on("online_users", onlineHandler);
-
-    return () => {
-      socket.off("online_users", onlineHandler);
-    };
-  }, []);
-
-  const isOnline = onlineUsers.includes(selectedUserId);
-
   // ================= FETCH CHAT HISTORY =================
   useEffect(() => {
     const fetchMessages = async () => {
@@ -104,6 +82,7 @@ const ChatBox: React.FC<ChatBoxProps> = ({ currentUserId, selectedUserId }) => {
         );
 
         const data = await res.json();
+
         setMessages(data);
       } catch (err) {
         console.error(err);
@@ -189,15 +168,7 @@ const ChatBox: React.FC<ChatBoxProps> = ({ currentUserId, selectedUserId }) => {
           className="w-10 h-10 rounded-full object-cover"
         />
 
-        <div className="flex flex-col">
-          <span className="font-semibold">{selectedUser?.name || "User"}</span>
-
-          {isOnline ? (
-            <span className="text-green-400 text-xs">● Online</span>
-          ) : (
-            <span className="text-gray-400 text-xs">Offline</span>
-          )}
-        </div>
+        <span className="font-semibold">{selectedUser?.name || "User"}</span>
       </div>
 
       {/* MESSAGES */}

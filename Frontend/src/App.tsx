@@ -16,24 +16,10 @@ import Collaborators from "./pages/collaborators";
 
 function App() {
   useEffect(() => {
-    const user = JSON.parse(localStorage.getItem("user") || "{}");
-
-    if (user?._id && !socket.connected) {
+    // connect socket once when app loads
+    if (!socket.connected) {
       socket.connect();
-      socket.emit("user_online", user._id);
     }
-
-    const handleBeforeUnload = () => {
-      if (user?._id) {
-        socket.emit("user_offline", user._id);
-      }
-    };
-
-    window.addEventListener("beforeunload", handleBeforeUnload);
-
-    return () => {
-      window.removeEventListener("beforeunload", handleBeforeUnload);
-    };
   }, []);
 
   return (

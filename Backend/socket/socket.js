@@ -1,115 +1,35 @@
-const onlineUsers = new Map();
+module.exports = function (io) {
 
-module.exports = function(io){
+  io.on("connection", (socket) => {
 
-  io.on("connection",(socket)=>{
+    // send message
+    socket.on("send_message", (data) => {
 
-    socket.on("user_online",(userId)=>{
-
-      if(!onlineUsers.has(userId)){
-        onlineUsers.set(userId,new Set());
-      }
-
-      onlineUsers.get(userId).add(socket.id);
-
-      io.emit("online_users",Array.from(onlineUsers.keys()));
+      // send to all other connected clients
+      socket.broadcast.emit("receive_message", data);
 
     });
 
-    socket.on("send_message",(data)=>{
+    // typing indicator
+    socket.on("typing", (data) => {
 
-      const receiverSockets = onlineUsers.get(data.receiverId);
-
-      if(receiverSockets){
-
-        receiverSockets.forEach(socketId=>{
-          io.to(socketId).emit("receive_message",data);
-        });
-
-      }
+      socket.broadcast.emit("typing", data);
 
     });
 
-    socket.on("typing",(data)=>{
+    socket.on("stop_typing", () => {
 
-      const receiverSockets = onlineUsers.get(data.receiverId);
-
-      if(receiverSockets){
-
-        receiverSockets.forEach(socketId=>{
-          io.to(socketId).emit("typing",data);
-        });
-
-      }
+      socket.broadcast.emit("stop_typing");
 
     });
 
-    socket.on("stop_typing",(data)=>{
+    // optional: message seen event
+    socket.on("message_seen", (data) => {
 
-      const receiverSockets = onlineUsers.get(data.receiverId);
-
-      if(receiverSockets){
-
-        receiverSockets.forEach(socketId=>{
-          io.to(socketId).emit("stop_typing",data);
-        });
-
-      }
-
-    });
-
-    socket.on("message_seen",(data)=>{
-
-      const senderSockets = onlineUsers.get(data.senderId);
-
-      if(senderSockets){
-
-        senderSockets.forEach(socketId=>{
-          io.to(socketId).emit("message_seen",data);
-        });
-
-      }
-
-    });
-
-    socket.on("disconnect",()=>{
-
-      for(const [userId,sockets] of onlineUsers.entries()){
-
-        if(sockets.has(socket.id)){
-
-          sockets.delete(socket.id);
-
-          if(sockets.size === 0){
-            onlineUsers.delete(userId);
-          }
-
-          break;
-
-        }
-
-      }
-
-      io.emit("online_users",Array.from(onlineUsers.keys()));
+      socket.broadcast.emit("message_seen", data);
 
     });
 
   });
 
-  socket.on("user_offline", (userId) => {
-
-  const sockets = onlineUsers.get(userId);
-
-  if (sockets) {
-    sockets.delete(socket.id);
-
-    if (sockets.size === 0) {
-      onlineUsers.delete(userId);
-    }
-  }
-
-  io.emit("online_users", Array.from(onlineUsers.keys()));
-
-});
-
-}
+};
