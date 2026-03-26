@@ -113,7 +113,8 @@ const EditProfile = () => {
         storedUser.profileCompleted = updatedUser.profileCompleted;
         localStorage.setItem("user", JSON.stringify(storedUser));
 
-        navigate("/userprofile");
+        // Redirect new users to home, existing users to their profile
+        navigate(isFirstTime ? "/" : "/userprofile");
       } else {
         alert(updatedUser.message || "Failed to update profile.");
       }
