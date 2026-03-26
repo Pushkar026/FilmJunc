@@ -178,140 +178,272 @@ const UserProfile = () => {
     }
   };
 
-  if (loading) return <div>Loading...</div>;
-  if (!user) return <div>User not found.</div>;
+  if (loading)
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-slate-950 to-slate-900 flex items-center justify-center text-white">
+        <div className="text-center">
+          <div className="text-6xl mb-4 animate-bounce">🎬</div>
+          <p className="text-xl font-semibold">Loading profile...</p>
+        </div>
+      </div>
+    );
+  if (!user)
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-slate-950 to-slate-900 flex items-center justify-center text-white">
+        <p className="text-2xl">User not found.</p>
+      </div>
+    );
 
   return (
-    <div className="min-h-screen bg-black text-white relative">
-      {/* 🎬 FilmJunc Logo - Top Left */}
-      <Link
-        to="/"
-        className="absolute top-6 left-6 text-2xl font-extrabold text-yellow-400 hover:text-yellow-300 hover:scale-105 transition duration-300 z-50"
-      >
-        🎬 FilmJunc
-      </Link>
-
-      {/* Banner */}
-      <div className="h-48 w-full relative">
-        <img
-          src={getImageUrl(
-            user.bannerImage,
-            "/images/ChatGPT Image Feb 24, 2026, 03_44_06 PM.png"
-          )}
-          alt="Banner"
-          className="w-full h-full object-cover opacity-80"
-        />
+    <div className="min-h-screen bg-gradient-to-br from-slate-950 via-red-950 to-slate-950 text-white relative overflow-hidden">
+      {/* Header Navigation */}
+      <div className="relative z-20 bg-black/80 backdrop-blur-xl border-b border-yellow-500/20 px-4 sm:px-6 md:px-8 py-4 flex justify-between items-center">
+        <Link
+          to="/"
+          className="text-xl sm:text-2xl font-black text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 to-amber-500 hover:scale-105 transition duration-300"
+        >
+          🎬 FilmJunc
+        </Link>
+        <button
+          onClick={() => navigate("/editprofile")}
+          className="px-4 sm:px-6 py-2 bg-gradient-to-r from-yellow-400 to-amber-500 hover:from-yellow-500 hover:to-amber-600 text-black font-bold rounded-full transition-all duration-300 hover:shadow-lg text-sm sm:text-base"
+        >
+          ✏️ Edit
+        </button>
       </div>
 
-      {/* Profile Section */}
-      <div className="relative max-w-5xl mx-auto px-6">
-        <div className="absolute -top-16 left-6">
-          <img
-            src={getImageUrl(user.profileImage)}
-            alt="Profile"
-            className="w-32 h-32 rounded-full border-4 border-yellow-400 shadow-lg object-cover"
-          />
+      {/* Banner Section */}
+      <div className="relative w-full h-64 sm:h-72 md:h-80 overflow-hidden">
+        <img
+          src={getImageUrl(user.bannerImage, "/images/default-banner.svg")}
+          alt="Banner"
+          className="w-full h-full object-cover opacity-90"
+        />
+        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-slate-950"></div>
+      </div>
+
+      {/* Profile Content */}
+      <div className="relative max-w-6xl mx-auto px-4 sm:px-6 md:px-8 pb-16">
+        {/* Profile Header */}
+        <div className="flex flex-col sm:flex-row gap-6 sm:gap-8 -mt-20 sm:-mt-24 relative z-10 mb-12">
+          {/* Profile Image */}
+          <div className="flex-shrink-0">
+            <img
+              src={getImageUrl(user.profileImage)}
+              alt="Profile"
+              className="w-40 h-40 sm:w-48 sm:h-48 rounded-2xl border-4 border-yellow-400 shadow-2xl object-cover"
+            />
+          </div>
+
+          {/* Profile Info */}
+          <div className="flex-1 flex flex-col justify-end pb-4">
+            <h1 className="text-4xl sm:text-5xl md:text-6xl font-black text-transparent bg-clip-text bg-gradient-to-r from-yellow-300 via-amber-400 to-yellow-500 mb-2">
+              {user.name}
+            </h1>
+            <div className="flex flex-wrap gap-3 mb-4">
+              <span className="inline-block px-4 py-2 bg-gradient-to-r from-yellow-400/20 to-amber-500/20 text-yellow-300 font-bold rounded-full border border-yellow-400/30">
+                {user.role}
+              </span>
+              <span className="inline-block px-4 py-2 bg-gradient-to-r from-red-600/20 to-red-700/20 text-red-300 font-bold rounded-full border border-red-400/30">
+                📍 {user.location}
+              </span>
+            </div>
+            <p className="text-gray-300 text-lg leading-relaxed max-w-2xl">
+              {user.bio}
+            </p>
+          </div>
         </div>
 
-        <div className="ml-40 pt-6">
-          <h1 className="text-3xl font-extrabold text-yellow-400">
-            {user.name}
-          </h1>
-          <p className="text-yellow-200 mt-1">{user.role}</p>
-          <p className="text-yellow-300">{user.location}</p>
-          <p className="mt-4 text-gray-200">{user.bio}</p>
+        {/* Action Buttons */}
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-12">
+          <button
+            onClick={() => navigate("/collaborators")}
+            className="group relative px-6 py-4 bg-gradient-to-r from-yellow-400 to-amber-500 hover:from-yellow-500 hover:to-amber-600 text-black font-bold rounded-xl shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden"
+          >
+            <span className="relative z-10 flex items-center justify-center gap-2">
+              👥 {collabCount} Collaborators
+            </span>
+            <div className="absolute inset-0 bg-gradient-to-r from-yellow-500 to-amber-600 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+          </button>
 
-          <div className="mt-6 flex gap-4 flex-wrap">
-            <button
-              onClick={() => navigate("/editprofile")}
-              className="px-6 py-2 bg-yellow-400 text-black rounded-full font-bold hover:bg-yellow-300"
-            >
-              🎟️ Edit Profile
-            </button>
+          <button
+            onClick={() => {
+              setShowRequests(true);
+              fetchRequests();
+            }}
+            className="group relative px-6 py-4 bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white font-bold rounded-xl shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden"
+          >
+            <span className="relative z-10 flex items-center justify-center gap-2">
+              🤝 Requests
+            </span>
+            <div className="absolute inset-0 bg-gradient-to-r from-red-700 to-red-800 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+          </button>
 
-            <button
-              onClick={() => navigate("/collaborators")}
-              className="px-6 py-2 bg-yellow-400 text-black rounded-full font-bold hover:bg-yellow-300"
-            >
-              {collabCount} Collaborators
-            </button>
+          <button
+            onClick={() => setShowPostModal(true)}
+            className="group relative px-6 py-4 bg-gradient-to-r from-slate-700 to-slate-800 hover:from-slate-600 hover:to-slate-700 text-yellow-300 font-bold rounded-xl shadow-lg hover:shadow-2xl border border-yellow-400/30 hover:border-yellow-400/60 transition-all duration-300 overflow-hidden"
+          >
+            <span className="relative z-10 flex items-center justify-center gap-2">
+              ➕ New Post
+            </span>
+            <div className="absolute inset-0 bg-gradient-to-r from-yellow-400/10 to-amber-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+          </button>
+        </div>
 
-            <button
-              onClick={() => {
-                setShowRequests(true);
-                fetchRequests();
-              }}
-              className="px-6 py-2 border-2 border-yellow-400 text-yellow-400 rounded-full font-bold hover:bg-yellow-400 hover:text-black"
-            >
-              🤝 Collaboration Requests
-            </button>
+        {/* Posts Section */}
+        <div className="relative">
+          <div className="mb-10">
+            <h2 className="text-4xl font-black mb-2 text-transparent bg-clip-text bg-gradient-to-r from-yellow-300 via-amber-400 to-yellow-500">
+              Your Posts
+            </h2>
+            <p className="text-gray-400 text-lg">
+              {posts.length === 0
+                ? "Share your journey with the community"
+                : `${posts.length} post${posts.length !== 1 ? "s" : ""}`}
+            </p>
           </div>
+
+          {posts.length === 0 ? (
+            <div className="text-center py-20">
+              <div className="text-6xl mb-4">📝</div>
+              <p className="text-2xl font-bold text-gray-400 mb-4">
+                No posts yet
+              </p>
+              <p className="text-gray-500 mb-8">
+                Share your first post to inspire other creators
+              </p>
+              <button
+                onClick={() => setShowPostModal(true)}
+                className="inline-block px-8 py-3 bg-gradient-to-r from-yellow-400 to-amber-500 hover:from-yellow-500 hover:to-amber-600 text-black font-bold rounded-full transition-all duration-300 hover:shadow-lg"
+              >
+                ➕ Create Post
+              </button>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+              {posts.map((post, idx) => (
+                <div
+                  key={post._id}
+                  className="group relative bg-gradient-to-b from-slate-800 to-slate-900 rounded-2xl overflow-hidden border border-slate-700 hover:border-yellow-400/50 shadow-lg hover:shadow-2xl hover:shadow-yellow-400/20 transition-all duration-300 hover:scale-105 animate-fadeIn"
+                  style={{ animationDelay: `${idx * 0.1}s` }}
+                >
+                  {/* Hover Glow Effect */}
+                  <div className="absolute inset-0 bg-gradient-to-r from-yellow-400/0 to-red-600/0 group-hover:from-yellow-400/10 group-hover:to-red-600/10 transition-all duration-300 pointer-events-none"></div>
+
+                  {post.media && (
+                    <div className="relative h-64 overflow-hidden">
+                      <img
+                        src={getImageUrl(post.media)}
+                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+                        alt="Post media"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-slate-900 to-transparent"></div>
+                    </div>
+                  )}
+
+                  <div className="relative p-6 z-10">
+                    <p className="text-gray-200 text-lg leading-relaxed mb-4">
+                      {post.content}
+                    </p>
+                    <div className="flex items-center justify-between">
+                      <time className="text-sm text-gray-500">
+                        {new Date(post.createdAt).toLocaleDateString("en-US", {
+                          month: "short",
+                          day: "numeric",
+                          year: "numeric",
+                        })}
+                      </time>
+                      <div className="px-3 py-1 bg-yellow-400/10 text-yellow-300 rounded-full text-xs font-bold border border-yellow-400/30">
+                        📍 Public
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Bottom Accent Line */}
+                  <div className="absolute bottom-0 left-0 h-1 w-0 group-hover:w-full bg-gradient-to-r from-yellow-400 to-red-600 transition-all duration-300"></div>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       </div>
 
       {/* Collaboration Requests Modal */}
       {showRequests && (
-        <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50">
-          <div className="bg-gray-900 p-6 rounded-xl w-96 max-h-[80vh] overflow-y-auto">
-            <h3 className="text-xl font-bold mb-4 text-yellow-400">
-              Collaboration Requests
+        <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+          <div className="bg-gradient-to-b from-slate-800 to-slate-900 p-8 rounded-2xl w-full max-w-md max-h-[80vh] overflow-y-auto border border-slate-700 shadow-2xl">
+            <h3 className="text-2xl font-black mb-6 text-transparent bg-clip-text bg-gradient-to-r from-yellow-300 to-amber-400">
+              🤝 Collaboration Requests
             </h3>
 
             {successMsg && (
-              <p className="mb-3 text-sm text-green-400">{successMsg}</p>
+              <p className="mb-4 text-center px-4 py-3 bg-green-900/30 text-green-300 rounded-lg font-semibold border border-green-500/30">
+                ✓ {successMsg}
+              </p>
             )}
 
             {reqLoading ? (
-              <p>Loading...</p>
+              <div className="text-center py-8">
+                <div className="text-4xl mb-2 animate-bounce">🔄</div>
+                <p className="text-gray-400">Loading requests...</p>
+              </div>
             ) : requests.length === 0 ? (
-              <p className="text-gray-400">No pending requests</p>
+              <div className="text-center py-8">
+                <p className="text-4xl mb-3">📭</p>
+                <p className="text-gray-400">No pending requests</p>
+              </div>
             ) : (
-              requests.map((req) => (
-                <div
-                  key={req._id}
-                  className="flex items-center justify-between bg-gray-800 p-3 rounded-lg mb-3"
-                >
-                  <div className="flex items-center gap-3">
-                    <img
-                      src={getImageUrl(req.sender.profileImage)}
-                      className="w-12 h-12 rounded-full border-2 border-yellow-400 cursor-pointer"
-                      onClick={() => navigate(`/viewprofile/${req.sender._id}`)}
-                    />
-                    <div>
-                      <p
-                        className="font-semibold text-yellow-300 cursor-pointer hover:underline"
-                        onClick={() =>
-                          navigate(`/viewprofile/${req.sender._id}`)
-                        }
+              <div className="space-y-4">
+                {requests.map((req) => (
+                  <div
+                    key={req._id}
+                    className="flex items-center justify-between bg-slate-700/50 p-4 rounded-xl border border-slate-600 hover:border-yellow-400/50 transition-all duration-300"
+                  >
+                    <div
+                      className="flex items-center gap-3 cursor-pointer flex-1"
+                      onClick={() => {
+                        navigate(`/viewprofile/${req.sender._id}`);
+                        setShowRequests(false);
+                      }}
+                    >
+                      <img
+                        src={getImageUrl(req.sender.profileImage)}
+                        className="w-12 h-12 rounded-full border-2 border-yellow-400 object-cover"
+                        alt={req.sender.name}
+                      />
+                      <div>
+                        <p className="font-semibold text-yellow-300 hover:text-yellow-200 transition-colors">
+                          {req.sender.name}
+                        </p>
+                        <p className="text-sm text-gray-400">
+                          {req.sender.role}
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="flex gap-2 ml-2">
+                      <button
+                        onClick={() => respondToRequest(req._id, "accepted")}
+                        className="px-3 py-1.5 bg-gradient-to-r from-yellow-400 to-amber-500 hover:from-yellow-500 hover:to-amber-600 text-black font-bold rounded-lg text-sm transition-all duration-300"
                       >
-                        {req.sender.name}
-                      </p>
-                      <p className="text-sm text-gray-400">{req.sender.role}</p>
+                        ✓
+                      </button>
+                      <button
+                        onClick={() => respondToRequest(req._id, "rejected")}
+                        className="px-3 py-1.5 bg-red-600/30 hover:bg-red-600/50 text-red-300 font-bold rounded-lg text-sm border border-red-500/50 transition-all duration-300"
+                      >
+                        ✕
+                      </button>
                     </div>
                   </div>
-
-                  <div className="flex gap-2">
-                    <button
-                      onClick={() => respondToRequest(req._id, "accepted")}
-                      className="px-3 py-1 bg-yellow-400 text-black rounded-md font-bold"
-                    >
-                      Accept
-                    </button>
-                    <button
-                      onClick={() => respondToRequest(req._id, "rejected")}
-                      className="px-3 py-1 border border-yellow-400 text-yellow-400 rounded-md"
-                    >
-                      Reject
-                    </button>
-                  </div>
-                </div>
-              ))
+                ))}
+              </div>
             )}
 
-            <div className="mt-4 text-right">
+            <div className="mt-6">
               <button
                 onClick={() => setShowRequests(false)}
-                className="px-4 py-2 bg-gray-700 rounded-md"
+                className="w-full px-4 py-2 bg-slate-700 hover:bg-slate-600 text-white font-bold rounded-lg transition-all duration-300"
               >
                 Close
               </button>
@@ -320,76 +452,65 @@ const UserProfile = () => {
         </div>
       )}
 
-      {/* Posts */}
-      <div className="max-w-5xl mx-auto px-6 mt-16">
-        <h2 className="text-2xl font-bold text-yellow-400 mb-4">Posts</h2>
-
-        <button
-          onClick={() => setShowPostModal(true)}
-          className="px-4 py-2 bg-yellow-400 text-black rounded-lg font-semibold"
-        >
-          ➕ Upload Post
-        </button>
-
-        {posts.length === 0 ? (
-          <p className="mt-6 text-gray-400 italic">No posts made yet.</p>
-        ) : (
-          <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-6">
-            {posts.map((post) => (
-              <div
-                key={post._id}
-                className="bg-gray-900 p-4 rounded-xl border border-gray-700"
-              >
-                {post.media && (
-                  <img
-                    src={getImageUrl(post.media)}
-                    className="w-full h-60 object-cover rounded-lg mb-4"
-                  />
-                )}
-                <p className="text-gray-200 mb-2">{post.content}</p>
-                <p className="text-sm text-gray-500">
-                  {new Date(post.createdAt).toLocaleString()}
-                </p>
-              </div>
-            ))}
-          </div>
-        )}
-      </div>
-
       {/* Post Modal */}
       {showPostModal && (
-        <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50">
-          <div className="bg-gray-900 p-6 rounded-xl w-96">
-            <h3 className="text-xl font-bold mb-4 text-yellow-400">
-              Create Post
+        <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+          <div className="bg-gradient-to-b from-slate-800 to-slate-900 p-8 rounded-2xl w-full max-w-md border border-slate-700 shadow-2xl">
+            <h3 className="text-2xl font-black mb-6 text-transparent bg-clip-text bg-gradient-to-r from-yellow-300 to-amber-400">
+              ✨ Create Post
             </h3>
+
             <textarea
               value={newContent}
               onChange={(e) => setNewContent(e.target.value)}
-              className="w-full h-24 p-2 rounded-md bg-gray-800 text-white mb-3"
+              placeholder="Share your thoughts, projects, or ideas..."
+              className="w-full h-32 p-4 rounded-xl bg-slate-700/50 text-white border border-slate-600 focus:border-yellow-400 focus:outline-none focus:ring-2 focus:ring-yellow-400/20 resize-none mb-4 placeholder-gray-500"
             />
-            <input
-              type="file"
-              onChange={(e) => setNewMedia(e.target.files?.[0] || null)}
-              className="w-full p-2 rounded-md bg-gray-800 text-white mb-4"
-            />
-            <div className="flex justify-end gap-4">
+
+            <label className="block mb-6">
+              <span className="text-sm text-gray-400 mb-2 inline-block">
+                📷 Add Media (Optional)
+              </span>
+              <input
+                type="file"
+                onChange={(e) => setNewMedia(e.target.files?.[0] || null)}
+                className="w-full p-3 rounded-xl bg-slate-700/50 text-gray-400 border border-slate-600 focus:border-yellow-400 cursor-pointer hover:bg-slate-700 transition-colors"
+              />
+            </label>
+
+            <div className="flex justify-end gap-3">
               <button
                 onClick={() => setShowPostModal(false)}
-                className="px-4 py-2 bg-gray-700 rounded-md"
+                className="px-6 py-2 bg-slate-700 hover:bg-slate-600 text-white font-bold rounded-lg transition-all duration-300"
               >
                 Cancel
               </button>
               <button
                 onClick={handlePostSubmit}
-                className="px-4 py-2 bg-yellow-400 text-black rounded-md font-bold"
+                className="px-6 py-2 bg-gradient-to-r from-yellow-400 to-amber-500 hover:from-yellow-500 hover:to-amber-600 text-black font-bold rounded-lg transition-all duration-300 shadow-lg hover:shadow-xl"
               >
-                Post
+                📤 Post
               </button>
             </div>
           </div>
         </div>
       )}
+
+      {/* Animations */}
+      <style>
+        {`
+          @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+          }
+          .animate-fadeIn { animation: fadeIn 0.6s ease-out forwards; }
+          .animate-bounce { animation: bounce 1s infinite; }
+          @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-8px); }
+          }
+        `}
+      </style>
     </div>
   );
 };

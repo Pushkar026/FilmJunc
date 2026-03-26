@@ -103,116 +103,217 @@ const ViewProfile = () => {
     }
   };
 
-  if (loading) return <p className="text-white p-6">Loading...</p>;
+  if (loading)
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-slate-950 to-slate-900 flex items-center justify-center text-white">
+        <div className="text-center">
+          <div className="text-6xl mb-4 animate-bounce">🎬</div>
+          <p className="text-xl font-semibold">Loading profile...</p>
+        </div>
+      </div>
+    );
 
   if (error || !user)
-    return <p className="text-white p-6">{error || "User not found"}</p>;
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-slate-950 to-slate-900 flex items-center justify-center text-white">
+        <div className="text-center">
+          <p className="text-6xl mb-4">❌</p>
+          <p className="text-2xl font-bold">{error || "User not found"}</p>
+        </div>
+      </div>
+    );
 
   return (
-    <div className="min-h-screen w-full bg-black text-white relative">
-      {/* 🎬 FilmJunc Logo - Fixed Top Left */}
-      <div className="absolute top-6 left-6 z-20">
+    <div className="min-h-screen w-full bg-gradient-to-br from-slate-950 via-red-950 to-slate-950 text-white relative overflow-hidden">
+      {/* Header Navigation */}
+      <div className="relative z-20 bg-black/80 backdrop-blur-xl border-b border-yellow-500/20 px-4 sm:px-6 md:px-8 py-4 flex justify-between items-center">
         <Link
           to="/"
-          className="text-2xl font-extrabold text-yellow-400 hover:text-yellow-300 hover:scale-105 transition duration-300"
+          className="text-xl sm:text-2xl font-black text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 to-amber-500 hover:scale-105 transition duration-300"
         >
           🎬 FilmJunc
         </Link>
+        <Link
+          to="/userprofile"
+          className="px-4 sm:px-6 py-2 bg-gradient-to-r from-slate-700 to-slate-800 hover:from-slate-600 hover:to-slate-700 text-yellow-300 font-bold rounded-full transition-all duration-300 hover:shadow-lg text-sm sm:text-base border border-yellow-400/30"
+        >
+          ← My Profile
+        </Link>
       </div>
 
-      {/* Banner */}
-      <div className="h-48 w-full relative">
+      {/* Banner Section */}
+      <div className="relative w-full h-64 sm:h-72 md:h-80 overflow-hidden">
         <img
-          src={getImageUrl(
-            user.bannerImage,
-            "/images/ChatGPT Image Feb 24, 2026, 03_44_06 PM.png"
-          )}
+          src={getImageUrl(user.bannerImage, "/images/default-banner.svg")}
           alt="Banner"
-          className="w-full h-full object-cover opacity-80"
+          className="w-full h-full object-cover opacity-90"
         />
+        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-slate-950"></div>
       </div>
 
-      {/* Profile Section */}
-      <div className="relative max-w-5xl mx-auto px-6">
-        <div className="absolute -top-16 left-6">
-          <img
-            src={getImageUrl(user.profileImage)}
-            alt="Profile"
-            className="w-32 h-32 rounded-full border-4 border-yellow-400 object-cover"
-          />
-        </div>
+      {/* Profile Content */}
+      <div className="relative max-w-6xl mx-auto px-4 sm:px-6 md:px-8 pb-16">
+        {/* Profile Header */}
+        <div className="flex flex-col sm:flex-row gap-6 sm:gap-8 -mt-20 sm:-mt-24 relative z-10 mb-12">
+          {/* Profile Image */}
+          <div className="flex-shrink-0">
+            <img
+              src={getImageUrl(user.profileImage)}
+              alt="Profile"
+              className="w-40 h-40 sm:w-48 sm:h-48 rounded-2xl border-4 border-yellow-400 shadow-2xl object-cover"
+            />
+          </div>
 
-        <div className="ml-40 pt-6">
-          <h1 className="text-3xl font-extrabold text-yellow-400">
-            {user.name}
-          </h1>
-          <p className="text-yellow-200">{user.role}</p>
-          <p className="text-yellow-300">{user.location}</p>
-          <p className="mt-4 text-gray-200">{user.bio}</p>
-
-          {/* Action Buttons */}
-          <div className="mt-6 flex gap-4 flex-wrap">
-            <button
-              onClick={() => navigate(`/chatbox/${id}`)}
-              className="bg-yellow-400 text-black py-2 px-6 rounded-full font-bold hover:bg-yellow-300"
-            >
-              💬 Message
-            </button>
-
-            {collabStatus === "none" && (
-              <button
-                onClick={handleCollaborate}
-                disabled={collabLoading}
-                className="border-2 border-yellow-400 text-yellow-400 py-2 px-6 rounded-full hover:bg-yellow-400 hover:text-black font-bold"
-              >
-                {collabLoading ? "Sending..." : "Collaborate"}
-              </button>
-            )}
-
-            {collabStatus === "pending" && (
-              <button
-                disabled
-                className="border-2 border-yellow-400 text-yellow-400 py-2 px-6 rounded-full opacity-60 cursor-not-allowed"
-              >
-                Requested
-              </button>
-            )}
-
-            {collabStatus === "accepted" && (
-              <button
-                disabled
-                className="bg-yellow-400 text-black py-2 px-6 rounded-full font-bold cursor-default"
-              >
-                🤝 Collaborators
-              </button>
-            )}
+          {/* Profile Info */}
+          <div className="flex-1 flex flex-col justify-end pb-4">
+            <h1 className="text-4xl sm:text-5xl md:text-6xl font-black text-transparent bg-clip-text bg-gradient-to-r from-yellow-300 via-amber-400 to-yellow-500 mb-2">
+              {user.name}
+            </h1>
+            <div className="flex flex-wrap gap-3 mb-4">
+              <span className="inline-block px-4 py-2 bg-gradient-to-r from-yellow-400/20 to-amber-500/20 text-yellow-300 font-bold rounded-full border border-yellow-400/30">
+                {user.role}
+              </span>
+              <span className="inline-block px-4 py-2 bg-gradient-to-r from-red-600/20 to-red-700/20 text-red-300 font-bold rounded-full border border-red-400/30">
+                📍 {user.location}
+              </span>
+            </div>
+            <p className="text-gray-300 text-lg leading-relaxed max-w-2xl">
+              {user.bio}
+            </p>
           </div>
         </div>
 
-        {/* Posts */}
-        <div className="mt-12">
-          <h2 className="text-2xl font-bold text-yellow-400 mb-4">Posts</h2>
+        {/* Action Buttons */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-12">
+          <button
+            onClick={() => navigate(`/chatbox/${id}`)}
+            className="group relative px-6 py-4 bg-gradient-to-r from-yellow-400 to-amber-500 hover:from-yellow-500 hover:to-amber-600 text-black font-bold rounded-xl shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden"
+          >
+            <span className="relative z-10 flex items-center justify-center gap-2 text-lg">
+              💬 Message
+            </span>
+            <div className="absolute inset-0 bg-gradient-to-r from-yellow-500 to-amber-600 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+          </button>
+
+          {collabStatus === "none" && (
+            <button
+              onClick={handleCollaborate}
+              disabled={collabLoading}
+              className="group relative px-6 py-4 bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white font-bold rounded-xl shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden disabled:opacity-50 disabled:cursor-not-allowed text-lg"
+            >
+              <span className="relative z-10 flex items-center justify-center gap-2">
+                {collabLoading ? "⏳ Sending..." : "🤝 Collaborate"}
+              </span>
+              <div className="absolute inset-0 bg-gradient-to-r from-red-700 to-red-800 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+            </button>
+          )}
+
+          {collabStatus === "pending" && (
+            <button
+              disabled
+              className="px-6 py-4 bg-slate-700/50 text-yellow-300 font-bold rounded-xl border-2 border-yellow-400/30 cursor-not-allowed opacity-60 text-lg"
+            >
+              ⏳ Request Pending
+            </button>
+          )}
+
+          {collabStatus === "accepted" && (
+            <button
+              disabled
+              className="px-6 py-4 bg-gradient-to-r from-green-600 to-green-700 text-white font-bold rounded-xl cursor-default text-lg"
+            >
+              ✅ Already Collaborators
+            </button>
+          )}
+        </div>
+
+        {/* Posts Section */}
+        <div className="relative">
+          <div className="mb-10">
+            <h2 className="text-4xl font-black mb-2 text-transparent bg-clip-text bg-gradient-to-r from-yellow-300 via-amber-400 to-yellow-500">
+              Posts
+            </h2>
+            <p className="text-gray-400 text-lg">
+              {user.posts && user.posts.length > 0
+                ? `${user.posts.length} post${
+                    user.posts.length !== 1 ? "s" : ""
+                  }`
+                : "No posts yet"}
+            </p>
+          </div>
 
           {user.posts && user.posts.length > 0 ? (
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              {user.posts.map((post) => (
-                <div key={post._id} className="bg-gray-800 p-4 rounded-xl">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {user.posts.map((post, idx) => (
+                <div
+                  key={post._id}
+                  className="group relative bg-gradient-to-b from-slate-800 to-slate-900 rounded-2xl overflow-hidden border border-slate-700 hover:border-yellow-400/50 shadow-lg hover:shadow-2xl hover:shadow-yellow-400/20 transition-all duration-300 hover:scale-105 animate-fadeIn"
+                  style={{ animationDelay: `${idx * 0.1}s` }}
+                >
+                  {/* Hover Glow Effect */}
+                  <div className="absolute inset-0 bg-gradient-to-r from-yellow-400/0 to-red-600/0 group-hover:from-yellow-400/10 group-hover:to-red-600/10 transition-all duration-300 pointer-events-none"></div>
+
                   {post.media && (
-                    <img
-                      src={getImageUrl(post.media)}
-                      className="w-full h-48 object-cover rounded-md mb-2"
-                      alt="Post media"
-                    />
+                    <div className="relative h-64 overflow-hidden">
+                      <img
+                        src={getImageUrl(post.media)}
+                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+                        alt="Post media"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-slate-900 to-transparent"></div>
+                    </div>
                   )}
-                  <p>{post.content}</p>
+
+                  <div className="relative p-6 z-10">
+                    <p className="text-gray-200 text-lg leading-relaxed mb-4">
+                      {post.content}
+                    </p>
+                    <div className="flex items-center justify-between">
+                      <time className="text-sm text-gray-500">
+                        {new Date(post.createdAt).toLocaleDateString("en-US", {
+                          month: "short",
+                          day: "numeric",
+                          year: "numeric",
+                        })}
+                      </time>
+                      <div className="px-3 py-1 bg-yellow-400/10 text-yellow-300 rounded-full text-xs font-bold border border-yellow-400/30">
+                        📍 {user.location}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Bottom Accent Line */}
+                  <div className="absolute bottom-0 left-0 h-1 w-0 group-hover:w-full bg-gradient-to-r from-yellow-400 to-red-600 transition-all duration-300"></div>
                 </div>
               ))}
             </div>
           ) : (
-            <p className="text-gray-400">No posts yet.</p>
+            <div className="text-center py-20">
+              <div className="text-6xl mb-4">📝</div>
+              <p className="text-2xl font-bold text-gray-400">No posts yet</p>
+              <p className="text-gray-500 mt-2">
+                This creator hasn't shared any posts yet
+              </p>
+            </div>
           )}
         </div>
       </div>
+
+      {/* Animations */}
+      <style>
+        {`
+          @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+          }
+          .animate-fadeIn { animation: fadeIn 0.6s ease-out forwards; }
+          .animate-bounce { animation: bounce 1s infinite; }
+          @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-8px); }
+          }
+        `}
+      </style>
     </div>
   );
 };

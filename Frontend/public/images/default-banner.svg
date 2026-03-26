@@ -1,0 +1,89 @@
+<svg viewBox="0 0 1920 480" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <!-- Main gradient -->
+    <linearGradient id="mainGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#0f172a;stop-opacity:1" />
+      <stop offset="25%" style="stop-color:#7f1d1d;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#0f172a;stop-opacity:1" />
+      <stop offset="75%" style="stop-color:#7f1d1d;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#0f172a;stop-opacity:1" />
+    </linearGradient>
+    
+    <!-- Accent gradient -->
+    <linearGradient id="accentGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#fbbf24;stop-opacity:0.2" />
+      <stop offset="50%" style="stop-color:#f59e0b;stop-opacity:0.1" />
+      <stop offset="100%" style="stop-color:#dc2626;stop-opacity:0.2" />
+    </linearGradient>
+
+    <!-- Film reel pattern -->
+    <pattern id="filmReel" x="0" y="0" width="120" height="120" patternUnits="userSpaceOnUse">
+      <circle cx="60" cy="60" r="50" fill="none" stroke="#fbbf24" stroke-width="2" opacity="0.15"/>
+      <circle cx="60" cy="60" r="35" fill="none" stroke="#fbbf24" stroke-width="1" opacity="0.1"/>
+      <circle cx="60" cy="60" r="20" fill="none" stroke="#fbbf24" stroke-width="1" opacity="0.1"/>
+      <circle cx="60" cy="60" r="5" fill="#fbbf24" opacity="0.2"/>
+    </pattern>
+
+    <!-- Blur effect -->
+    <filter id="blur">
+      <feGaussianBlur in="SourceGraphic" stdDeviation="2" />
+    </filter>
+  </defs>
+
+  <!-- Base gradient background -->
+  <rect width="1920" height="480" fill="url(#mainGradient)"/>
+
+  <!-- Film reel pattern overlay -->
+  <rect width="1920" height="480" fill="url(#filmReel)" opacity="0.6"/>
+
+  <!-- Accent bars -->
+  <rect x="0" y="0" width="1920" height="480" fill="url(#accentGradient)"/>
+
+  <!-- Top accent line -->
+  <rect x="0" y="0" width="1920" height="4" fill="#fbbf24" opacity="0.6"/>
+
+  <!-- Left vertical accent -->
+  <rect x="0" y="0" width="8" height="480" fill="url(#accentGradient)"/>
+
+  <!-- Right vertical accent -->
+  <rect x="1912" y="0" width="8" height="480" fill="url(#accentGradient)"/>
+
+  <!-- Center decorative circles -->
+  <circle cx="960" cy="240" r="300" fill="none" stroke="#fbbf24" stroke-width="2" opacity="0.1" filter="url(#blur)"/>
+  <circle cx="960" cy="240" r="200" fill="none" stroke="#dc2626" stroke-width="2" opacity="0.08" filter="url(#blur)"/>
+  <circle cx="960" cy="240" r="100" fill="none" stroke="#fbbf24" stroke-width="1" opacity="0.1"/>
+
+  <!-- Left corner accent -->
+  <circle cx="150" cy="80" r="120" fill="none" stroke="#fbbf24" stroke-width="2" opacity="0.1" filter="url(#blur)"/>
+  <circle cx="150" cy="80" r="80" fill="none" stroke="#dc2626" stroke-width="1" opacity="0.08"/>
+
+  <!-- Right corner accent -->
+  <circle cx="1770" cy="400" r="150" fill="none" stroke="#dc2626" stroke-width="2" opacity="0.1" filter="url(#blur)"/>
+  <circle cx="1770" cy="400" r="100" fill="none" stroke="#fbbf24" stroke-width="1" opacity="0.08"/>
+
+  <!-- Bottom accent bar -->
+  <rect x="0" y="476" width="1920" height="4" fill="#dc2626" opacity="0.5"/>
+
+  <!-- Horizontal lines (film strip effect) -->
+  <line x1="0" y1="120" x2="1920" y2="120" stroke="#fbbf24" stroke-width="1" opacity="0.05"/>
+  <line x1="0" y1="240" x2="1920" y2="240" stroke="#dc2626" stroke-width="1" opacity="0.05"/>
+  <line x1="0" y1="360" x2="1920" y2="360" stroke="#fbbf24" stroke-width="1" opacity="0.05"/>
+
+  <!-- Subtle vignette -->
+  <defs>
+    <radialGradient id="vignette" cx="50%" cy="50%" r="70%">
+      <stop offset="0%" style="stop-color:#000000;stop-opacity:0" />
+      <stop offset="100%" style="stop-color:#000000;stop-opacity:0.3" />
+    </radialGradient>
+  </defs>
+  <rect width="1920" height="480" fill="url(#vignette)"/>
+
+  <!-- Creative shapes for visual interest -->
+  <path d="M 100 0 L 200 100 L 100 200 L 0 100 Z" fill="#fbbf24" opacity="0.05" filter="url(#blur)"/>
+  <path d="M 1820 280 L 1920 380 L 1820 480 L 1720 380 Z" fill="#dc2626" opacity="0.05" filter="url(#blur)"/>
+
+  <!-- Text/Branding area indicator (light) -->
+  <text x="960" y="240" font-family="Arial, sans-serif" font-size="72" font-weight="bold" text-anchor="middle" fill="#fbbf24" opacity="0.03">
+    FilmJunc
+  </text>
+</svg>

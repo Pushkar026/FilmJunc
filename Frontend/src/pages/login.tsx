@@ -8,17 +8,44 @@ const Login = () => {
     password: "",
   });
 
+  const [errors, setErrors] = useState<Record<string, string>>({});
+  const [loading, setLoading] = useState(false);
+  const [successMsg, setSuccessMsg] = useState("");
   const navigate = useNavigate();
+
+  const validateForm = () => {
+    const newErrors: Record<string, string> = {};
+
+    if (!formData.username.trim()) {
+      newErrors.username = "Username is required";
+    }
+
+    if (!formData.password.trim()) {
+      newErrors.password = "Password is required";
+    } else if (formData.password.length < 6) {
+      newErrors.password = "Password must be at least 6 characters";
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
+    // Clear error when user starts typing
+    if (errors[name]) {
+      setErrors({ ...errors, [name]: "" });
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
+    if (!validateForm()) return;
+
     try {
+      setLoading(true);
       const res = await fetch(`${API_BASE_URL}/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -28,20 +55,25 @@ const Login = () => {
       const data = await res.json();
 
       if (res.ok) {
+        setSuccessMsg("✅ Login successful! Redirecting...");
         localStorage.setItem("token", data.token);
         localStorage.setItem("user", JSON.stringify(data.user));
 
-        if (!data.user.profileCompleted) {
-          navigate("/editprofile");
-        } else {
-          navigate("/");
-        }
+        setTimeout(() => {
+          if (!data.user.profileCompleted) {
+            navigate("/editprofile");
+          } else {
+            navigate("/");
+          }
+        }, 1500);
       } else {
-        alert(data.message || "Login failed");
+        setErrors({ submit: data.message || "Login failed" });
       }
     } catch (err) {
       console.error(err);
-      alert("An error occurred");
+      setErrors({ submit: "An error occurred. Please try again." });
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -81,7 +113,7 @@ const Login = () => {
       ))}
 
       {/* Center Form */}
-      <div className="flex flex-1 items-center justify-center">
+      <div className="flex flex-1 items-center justify-center px-4">
         <form
           onSubmit={handleSubmit}
           className="relative z-10 w-full max-w-md rounded-2xl bg-gray-800/70 p-8 shadow-xl backdrop-blur-lg"
@@ -90,51 +122,92 @@ const Login = () => {
             FilmJunc Login
           </h2>
 
+          {/* Error Alert */}
+          {errors.submit && (
+            <div className="mb-4 p-3 bg-red-900/50 border border-red-500 rounded-lg text-red-300 text-sm">
+              {errors.submit}
+            </div>
+          )}
+
+          {/* Success Message */}
+          {successMsg && (
+            <div className="mb-4 p-3 bg-green-900/50 border border-green-500 rounded-lg text-green-300 text-sm">
+              {successMsg}
+            </div>
+          )}
+
           <label className="block mb-4">
-            <span className="text-gray-300">Username</span>
+            <span className="text-gray-300 text-sm font-semibold">
+              Username
+            </span>
             <input
               type="text"
               name="username"
               value={formData.username}
               onChange={handleChange}
-              className="mt-1 block w-full rounded-xl border border-gray-700 bg-gray-900 px-4 py-3 text-white focus:border-yellow-400 focus:outline-none"
-              required
+              className={`mt-1 block w-full rounded-xl border-2 bg-gray-900 px-4 py-3 text-white focus:outline-none transition ${
+                errors.username
+                  ? "border-red-500 focus:border-red-400"
+                  : "border-gray-700 focus:border-yellow-400"
+              }`}
+              placeholder="Enter username"
+              disabled={loading}
             />
+            {errors.username && (
+              <p className="text-red-400 text-xs mt-1">{errors.username}</p>
+            )}
           </label>
 
           <label className="block mb-6">
-            <span className="text-gray-300">Password</span>
+            <span className="text-gray-300 text-sm font-semibold">
+              Password
+            </span>
             <input
               type="password"
               name="password"
               value={formData.password}
               onChange={handleChange}
-              className="mt-1 block w-full rounded-xl border border-gray-700 bg-gray-900 px-4 py-3 text-white focus:border-yellow-400 focus:outline-none"
-              required
+              className={`mt-1 block w-full rounded-xl border-2 bg-gray-900 px-4 py-3 text-white focus:outline-none transition ${
+                errors.password
+                  ? "border-red-500 focus:border-red-400"
+                  : "border-gray-700 focus:border-yellow-400"
+              }`}
+              placeholder="Enter password"
+              disabled={loading}
             />
+            {errors.password && (
+              <p className="text-red-400 text-xs mt-1">{errors.password}</p>
+            )}
           </label>
 
           <button
             type="submit"
-            className="w-full rounded-xl bg-yellow-400 px-4 py-3 font-semibold text-black transition hover:bg-yellow-300"
+            disabled={loading}
+            className={`w-full rounded-xl px-4 py-3 font-semibold transition ${
+              loading
+                ? "bg-gray-600 text-gray-300 cursor-not-allowed"
+                : "bg-yellow-400 text-black hover:bg-yellow-300 active:scale-95"
+            }`}
           >
-            Login
+            {loading ? "⏳ Logging in..." : "🎬 Login"}
           </button>
 
           <p className="mt-6 text-center text-sm text-gray-400">
             Don't have an account?{" "}
-            <Link to="/signup" className="text-yellow-400 hover:underline">
-              Sign Up
+            <Link
+              to="/signup"
+              className="text-yellow-400 hover:underline font-semibold"
+            >
+              Sign up here
             </Link>
           </p>
         </form>
       </div>
 
-      {/* Floating Animation */}
       <style>
         {`
           @keyframes float { 
-            0%,100% { transform: translateY(0) rotate(0deg); } 
+            0%, 100% { transform: translateY(0) rotate(0deg); } 
             50% { transform: translateY(-20px) rotate(15deg); } 
           }
           .animate-float { animation: float 6s ease-in-out infinite; }

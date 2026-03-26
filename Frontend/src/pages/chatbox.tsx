@@ -155,55 +155,100 @@ const ChatBox: React.FC<ChatBoxProps> = ({ currentUserId, selectedUserId }) => {
   }, [messages]);
 
   return (
-    <div className="flex flex-col h-screen bg-gradient-to-b from-black via-red-950 to-black text-white">
+    <div className="flex flex-col h-screen bg-gradient-to-br from-slate-950 via-red-950 to-slate-950 text-white">
       {/* HEADER */}
-      <div className="flex items-center gap-4 px-6 py-3 bg-black border-b border-gray-800 shadow-md">
-        <Link to="/inbox" className="text-yellow-400 text-xl">
+      <div className="flex items-center gap-4 px-4 sm:px-6 md:px-8 py-4 bg-black/80 backdrop-blur-xl border-b border-yellow-500/20 shadow-lg z-10">
+        <Link
+          to="/inbox"
+          className="text-2xl sm:text-3xl text-yellow-400 hover:text-yellow-300 hover:scale-110 transition-all duration-300"
+        >
           ←
         </Link>
 
         <img
           src={getImageUrl(selectedUser?.profileImage)}
-          alt="profile"
-          className="w-10 h-10 rounded-full object-cover"
+          alt={selectedUser?.name}
+          className="w-12 h-12 sm:w-14 sm:h-14 rounded-full border-2 border-yellow-400 object-cover"
         />
 
-        <span className="font-semibold">{selectedUser?.name || "User"}</span>
+        <div className="flex-1">
+          <h2 className="text-lg sm:text-xl font-bold text-white">
+            {selectedUser?.name || "User"}
+          </h2>
+          {typing && (
+            <p className="text-xs sm:text-sm text-yellow-300 animate-pulse">
+              ✍️ typing...
+            </p>
+          )}
+        </div>
+
+        <Link
+          to={`/viewprofile/${selectedUserId}`}
+          className="text-yellow-400 hover:text-yellow-300 transition-colors text-2xl"
+          title="View Profile"
+        >
+          👤
+        </Link>
       </div>
 
       {/* MESSAGES */}
-      <div className="flex-1 overflow-y-auto p-6 space-y-4 flex flex-col">
+      <div className="flex-1 overflow-y-auto p-4 sm:p-6 md:p-8 space-y-4 flex flex-col">
+        {messages.length === 0 && (
+          <div className="flex items-center justify-center h-full">
+            <div className="text-center">
+              <div className="text-5xl mb-4">💬</div>
+              <p className="text-gray-400 text-lg">Start a conversation!</p>
+              <p className="text-gray-500 text-sm mt-2">
+                Send a message to begin
+              </p>
+            </div>
+          </div>
+        )}
+
         {messages.map((msg, idx) => (
           <div
             key={idx}
-            className={`max-w-[60%] p-3 rounded-lg ${
-              msg.senderId === currentUserId
-                ? "bg-yellow-400 text-black self-end ml-auto"
-                : "bg-gray-800 text-white self-start"
-            }`}
+            className={`flex ${
+              msg.senderId === currentUserId ? "justify-end" : "justify-start"
+            } animate-fadeIn`}
+            style={{ animationDelay: `${idx * 0.05}s` }}
           >
-            {msg.content}
+            <div
+              className={`group max-w-[70%] sm:max-w-[60%] px-4 sm:px-6 py-3 rounded-2xl transition-all duration-300 shadow-lg ${
+                msg.senderId === currentUserId
+                  ? "bg-gradient-to-r from-yellow-400 to-amber-500 text-black font-semibold hover:shadow-xl hover:shadow-yellow-400/30"
+                  : "bg-gradient-to-r from-slate-700 to-slate-800 text-gray-100 border border-slate-600 group-hover:border-yellow-400/50 hover:shadow-xl hover:shadow-slate-400/20"
+              }`}
+            >
+              <p className="break-words text-sm sm:text-base">{msg.content}</p>
+              <p
+                className={`text-xs mt-2 ${
+                  msg.senderId === currentUserId
+                    ? "text-amber-700"
+                    : "text-gray-400"
+                }`}
+              >
+                {msg.timestamp
+                  ? new Date(msg.timestamp).toLocaleTimeString([], {
+                      hour: "2-digit",
+                      minute: "2-digit",
+                    })
+                  : "just now"}
+              </p>
+            </div>
           </div>
         ))}
 
         <div ref={chatEndRef} />
       </div>
 
-      {/* TYPING */}
-      {typing && (
-        <div className="px-6 text-sm text-gray-400">
-          {selectedUser?.name} is typing...
-        </div>
-      )}
-
       {/* INPUT */}
-      <div className="flex gap-2 p-4 bg-black border-t border-gray-800">
+      <div className="flex gap-2 p-4 sm:p-6 md:p-8 bg-black/80 backdrop-blur-xl border-t border-yellow-500/20 shadow-lg">
         <input
           type="text"
           value={text}
           onChange={(e) => {
             setText(e.target.value);
-
             socket.emit("typing", {
               senderId: currentUserId,
               receiverId: selectedUserId,
@@ -211,16 +256,33 @@ const ChatBox: React.FC<ChatBoxProps> = ({ currentUserId, selectedUserId }) => {
           }}
           onKeyDown={(e) => e.key === "Enter" && handleSend()}
           placeholder="Type a message..."
-          className="flex-1 px-4 py-3 rounded-lg bg-gray-900 text-yellow-300 placeholder-yellow-500 focus:outline-none focus:ring-2 focus:ring-yellow-400"
+          className="flex-1 px-4 sm:px-6 py-3 sm:py-4 rounded-xl bg-slate-700/50 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-yellow-400 border border-slate-600 focus:border-yellow-400 transition-all duration-300"
         />
 
         <button
           onClick={handleSend}
-          className="bg-yellow-400 text-black px-6 py-2 rounded-full font-bold hover:bg-yellow-300"
+          className="group relative px-6 sm:px-8 py-3 sm:py-4 bg-gradient-to-r from-yellow-400 to-amber-500 hover:from-yellow-500 hover:to-amber-600 text-black font-bold rounded-xl shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden flex-shrink-0"
         >
-          Send
+          <span className="relative z-10 text-lg sm:text-xl">📤</span>
+          <div className="absolute inset-0 bg-gradient-to-r from-yellow-500 to-amber-600 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
         </button>
       </div>
+
+      {/* Animations */}
+      <style>
+        {`
+          @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+          }
+          .animate-fadeIn { animation: fadeIn 0.3s ease-out forwards; }
+          @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+          }
+          .animate-pulse { animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite; }
+        `}
+      </style>
     </div>
   );
 };
