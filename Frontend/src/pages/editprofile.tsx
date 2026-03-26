@@ -72,6 +72,8 @@ const EditProfile = () => {
       setProfileFile(file);
       setProfileImage(URL.createObjectURL(file)); // preview
     }
+    // Reset input so same file can be selected again
+    e.target.value = "";
   };
 
   const handleBannerChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -80,6 +82,8 @@ const EditProfile = () => {
       setBannerFile(file);
       setBannerImage(URL.createObjectURL(file)); // preview
     }
+    // Reset input so same file can be selected again
+    e.target.value = "";
   };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -167,7 +171,10 @@ const EditProfile = () => {
         {/* Form Container */}
         <div className="bg-gradient-to-b from-slate-800 to-slate-900 rounded-2xl overflow-hidden border border-slate-700 shadow-2xl">
           {/* Banner Section */}
-          <div className="relative h-64 sm:h-72 md:h-80 w-full group overflow-hidden cursor-pointer">
+          <div 
+            className="relative h-64 sm:h-72 md:h-80 w-full group overflow-hidden cursor-pointer"
+            onClick={() => bannerInputRef.current?.click()}
+          >
             <img
               src={bannerImage}
               alt="Banner"
@@ -194,14 +201,17 @@ const EditProfile = () => {
           <div className="relative px-4 sm:px-8 md:px-12 pb-12">
             {/* Profile Image */}
             <div className="flex flex-col sm:flex-row sm:items-end gap-6 sm:gap-8 -mt-20 sm:-mt-24 relative z-10 mb-8">
-              <div className="group relative flex-shrink-0">
+              <div 
+                className="group relative flex-shrink-0 cursor-pointer"
+                onClick={() => profileInputRef.current?.click()}
+              >
                 <img
                   src={profileImage}
                   alt="Profile"
-                  className="w-40 h-40 sm:w-48 sm:h-48 rounded-2xl border-4 border-yellow-400 shadow-2xl object-cover group-hover:scale-105 transition-transform duration-300 cursor-pointer"
+                  className="w-40 h-40 sm:w-48 sm:h-48 rounded-2xl border-4 border-yellow-400 shadow-2xl object-cover group-hover:scale-105 transition-transform duration-300"
                   onClick={() => profileInputRef.current?.click()}
                 />
-                <div className="absolute inset-0 rounded-2xl bg-black/40 group-hover:bg-black/30 transition-all duration-300 flex items-center justify-center opacity-0 group-hover:opacity-100">
+                <div className="absolute inset-0 rounded-2xl bg-black/40 group-hover:bg-black/30 transition-all duration-300 flex items-center justify-center opacity-0 group-hover:opacity-100 pointer-events-none">
                   <div className="text-4xl">📷</div>
                 </div>
                 <input
