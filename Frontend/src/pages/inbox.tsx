@@ -151,7 +151,7 @@ const Inbox: React.FC<InboxProps> = ({ currentUserId }) => {
               Start a conversation with creators you find
             </p>
             <Link
-              to="/home"
+              to="/"
               className="inline-block px-6 py-3 bg-gradient-to-r from-yellow-400 to-amber-500 hover:from-yellow-500 hover:to-amber-600 text-black font-bold rounded-full transition-all duration-300 hover:shadow-lg"
             >
               🔍 Find Creators
