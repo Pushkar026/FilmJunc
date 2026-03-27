@@ -118,6 +118,10 @@ const EditProfile = () => {
         localStorage.setItem("user", JSON.stringify(storedUser));
 
         // Redirect new users to home, existing users to their profile
+        if (isFirstTime) {
+          // Scroll to top before navigating
+          window.scrollTo(0, 0);
+        }
         navigate(isFirstTime ? "/" : "/userprofile");
       } else {
         alert(updatedUser.message || "Failed to update profile.");
@@ -171,7 +175,7 @@ const EditProfile = () => {
         {/* Form Container */}
         <div className="bg-gradient-to-b from-slate-800 to-slate-900 rounded-2xl overflow-hidden border border-slate-700 shadow-2xl">
           {/* Banner Section */}
-          <div 
+          <div
             className="relative h-64 sm:h-72 md:h-80 w-full group overflow-hidden cursor-pointer"
             onClick={() => bannerInputRef.current?.click()}
           >
@@ -201,7 +205,7 @@ const EditProfile = () => {
           <div className="relative px-4 sm:px-8 md:px-12 pb-12">
             {/* Profile Image */}
             <div className="flex flex-col sm:flex-row sm:items-end gap-6 sm:gap-8 -mt-20 sm:-mt-24 relative z-10 mb-8">
-              <div 
+              <div
                 className="group relative flex-shrink-0 cursor-pointer"
                 onClick={() => profileInputRef.current?.click()}
               >
@@ -209,7 +213,6 @@ const EditProfile = () => {
                   src={profileImage}
                   alt="Profile"
                   className="w-40 h-40 sm:w-48 sm:h-48 rounded-2xl border-4 border-yellow-400 shadow-2xl object-cover group-hover:scale-105 transition-transform duration-300"
-                  onClick={() => profileInputRef.current?.click()}
                 />
                 <div className="absolute inset-0 rounded-2xl bg-black/40 group-hover:bg-black/30 transition-all duration-300 flex items-center justify-center opacity-0 group-hover:opacity-100 pointer-events-none">
                   <div className="text-4xl">📷</div>

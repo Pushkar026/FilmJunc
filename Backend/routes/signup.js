@@ -23,10 +23,16 @@ router.post("/", async (req, res) => {
       return res.status(400).json({ message: "Email already exists" });
     }
 
-    // 2️⃣ Hash password
+    // 2️⃣ Check if username already exists
+    const usernameExists = await User.findOne({ username });
+    if (usernameExists) {
+      return res.status(400).json({ message: "Username already exists" });
+    }
+
+    // 3️⃣ Hash password
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    // 3️⃣ Create new user
+    // 4️⃣ Create new user
     const newUser = new User({
       username,
       email,
@@ -36,14 +42,14 @@ router.post("/", async (req, res) => {
 
     await newUser.save();
 
-    // 4️⃣ Generate JWT token
+    // 5️⃣ Generate JWT token
     const token = jwt.sign(
       { id: newUser._id },
       process.env.JWT_SECRET,
       { expiresIn: "1d" }
     );
 
-    // 5️⃣ Send response
+    // 6️⃣ Send response
     res.status(201).json({
       message: "New user created successfully",
       token,
@@ -57,6 +63,15 @@ router.post("/", async (req, res) => {
 
   } catch (error) {
     console.error("Signup error:", error);
+    
+    // Handle duplicate key error
+    if (error.code === 11000) {
+      const field = Object.keys(error.keyPattern)[0];
+      return res.status(400).json({
+        message: `${field.charAt(0).toUpperCase() + field.slice(1)} already exists`,
+      });
+    }
+
     res.status(500).json({
       message: "Something went wrong",
       error: error.message,
